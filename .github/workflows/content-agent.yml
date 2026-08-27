@@ -2,15 +2,11 @@ name: AI Content Agent
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
-
-concurrency:
-  group: content-agent
-  cancel-in-progress: false
 
 jobs:
   run-content-agent:
@@ -34,8 +30,9 @@ jobs:
       
       - name: Run Content Agent
         env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.6-flash' }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-1.5-flash' }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           CONTENT_LANGUAGE: ${{ vars.CONTENT_LANGUAGE || 'ar' }}
@@ -43,10 +40,10 @@ jobs:
           CONTENT_STYLE: ${{ vars.CONTENT_STYLE || 'احترافي، مفيد، واضح، طبيعي' }}
           CONTENT_AUDIENCE: ${{ vars.CONTENT_AUDIENCE || 'الجمهور العربي' }}
           DUPLICATE_THRESHOLD: ${{ vars.DUPLICATE_THRESHOLD || '0.78' }}
-          MAX_GENERATION_ATTEMPTS: ${{ vars.MAX_GENERATION_ATTEMPTS || '6' }}
+          MAX_GENERATION_ATTEMPTS: ${{ vars.MAX_GENERATION_ATTEMPTS || '3' }}
           MEMORY_CONTEXT_LIMIT: ${{ vars.MEMORY_CONTEXT_LIMIT || '100' }}
           MAX_HASHTAGS: ${{ vars.MAX_HASHTAGS || '5' }}
-          DRY_RUN: ${{ vars.DRY_RUN || 'true' }}
+          DRY_RUN: ${{ vars.DRY_RUN || 'false' }}
         run: |
           python main.py
       
