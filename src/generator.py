@@ -2,11 +2,19 @@ import os
 import json
 import re
 import requests
+import time
 from typing import Dict, Any, List, Optional
 from src.config import Config
 
-# نموذج واحد مضمون على OpenRouter
-OPENROUTER_MODEL = "meta-llama/llama-3.1-8b-instruct:free"
+# قائمة النماذج المجانية المتاحة حالياً على OpenRouter (2026)
+OPENROUTER_FREE_MODELS = [
+    "meta-llama/llama-3-8b-instruct:free",
+    "google/gemma-2-9b-it:free",
+    "mistralai/mistral-7b-instruct:free",
+    "qwen/qwen-2.5-7b-instruct:free",
+    "deepseek/deepseek-r1-distill-llama-8b:free",
+    "nousresearch/hermes-3-llama-3.1-8b:free",
+]
 
 class ContentGenerator:
     def __init__(self, config: Config):
@@ -17,8 +25,8 @@ class ContentGenerator:
         
         print(f"Gemini Model: {self.model}")
         if self.openrouter_key:
-            print(f"OpenRouter Model: {OPENROUTER_MODEL}")
-            print("OpenRouter fallback: enabled")
+            print(f"OpenRouter: {len(OPENROUTER_FREE_MODELS)} free models available")
+            print("Models: " + ", ".join(OPENROUTER_FREE_MODELS[:3]) + "...")
 
     def build_prompt(self, recent_posts: List[Dict[str, Any]]) -> str:
         memory = ""
@@ -82,23 +90,26 @@ class ContentGenerator:
 
         # 1. Try Gemini first
         if self.gemini_key:
-            print("\n🔵 Trying Gemini API...")
+            print("\n Trying Gemini API...")
             result = self._generate_gemini(prompt)
             if result:
                 print("✅ Content generated with Gemini")
                 return result
             print("❌ Gemini failed, trying OpenRouter...")
 
-        # 2. Try OpenRouter
+        # 2. Try OpenRouter models
         if self.openrouter_key:
-            print(f"\n🟢 Trying OpenRouter ({OPENROUTER_MODEL})...")
-            result = self._generate_openrouter(prompt)
-            if result:
-                print(f"✅ Content generated with OpenRouter")
-                return result
-            print("❌ OpenRouter failed")
+            print(f"\n🟢 Trying {len(OPENROUTER_FREE_MODELS)} OpenRouter free models...")
+            for i, model in enumerate(OPENROUTER_FREE_MODELS, 1):
+                print(f"\n  Attempt {i}/{len(OPENROUTER_FREE_MODELS)}: {model}")
+                result = self._generate_openrouter(prompt, model)
+                if result:
+                    print(f"✅ Content generated with OpenRouter ({model})")
+                    return result
+                print(f"  ❌ {model} failed, trying next...")
+                time.sleep(2)  # انتظار قصير بين المحاولات
 
-        print("\n❌ All models failed")
+        print("\n All models failed")
         return None
 
     def _generate_gemini(self, prompt: str) -> Optional[Dict[str, Any]]:
@@ -138,7 +149,7 @@ class ContentGenerator:
             print(f"  Error: {e}")
             return None
 
-    def _generate_openrouter(self, prompt: str) -> Optional[Dict[str, Any]]:
+    def _generate_openrouter(self, prompt: str, model: str) -> Optional[Dict[str, Any]]:
         url = "https://openrouter.ai/api/v1/chat/completions"
         headers = {
             "Content-Type": "application/json",
@@ -146,7 +157,7 @@ class ContentGenerator:
             "HTTP-Referer": "https://github.com/ablove584-sketch/ai-content-agent",
         }
         data = {
-            "model": OPENROUTER_MODEL,
+            "model": model,
             "messages": [
                 {"role": "system", "content": "أنت كاتب محتوى محترف. أعد النتيجة بصيغة JSON فقط."},
                 {"role": "user", "content": prompt}
@@ -159,15 +170,15 @@ class ContentGenerator:
             response = requests.post(url, headers=headers, json=data, timeout=90)
 
             if response.status_code != 200:
-                print(f"  API error: {response.status_code}")
-                print(f"  Response: {response.text[:200]}")
+                print(f"    API error: {response.status_code}")
+                print(f"    Response: {response.text[:200]}")
                 return None
 
             result = response.json()
             content_text = result["choices"][0]["message"]["content"]
             return self.extract_json(content_text)
         except Exception as e:
-            print(f"  Error: {e}")
+            print(f"    Error: {e}")
             return None
 
 
