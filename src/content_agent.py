@@ -19,7 +19,7 @@ class ContentAgent:
     def __init__(self, config: Config):
         self.config = config
         self.detector = DuplicateDetector(threshold=config.DUPLICATE_THRESHOLD)
-        self.generator = ContentGenerator(config.GEMINI_API_KEY, config.GEMINI_MODEL)
+        self.generator = ContentGenerator(config)
         self.publisher = TelegramPublisher(config.TELEGRAM_BOT_TOKEN, config.TELEGRAM_CHANNEL_ID)
     
     def run(self) -> bool:
