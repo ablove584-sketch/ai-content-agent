@@ -27,7 +27,7 @@ class Config:
     DUPLICATE_THRESHOLD: float = float(os.getenv("DUPLICATE_THRESHOLD", "0.78"))
     
     # Generation Limits
-    MAX_GENERATION_ATTEMPTS: int = int(os.getenv("MAX_GENERATION_ATTEMPTS", "6"))
+    MAX_GENERATION_ATTEMPTS: int = int(os.getenv("MAX_GENERATION_ATTEMPTS", "3"))
     MEMORY_CONTEXT_LIMIT: int = int(os.getenv("MEMORY_CONTEXT_LIMIT", "100"))
     MAX_HASHTAGS: int = int(os.getenv("MAX_HASHTAGS", "5"))
     

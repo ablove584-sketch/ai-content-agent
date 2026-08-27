@@ -7,7 +7,7 @@ from typing import Dict, Any, List, Optional
 from src.config import Config
 
 class ContentGenerator:
-    def __init__(self, api_key: str, model: str = "gemini-3.6-flash"):
+    def __init__(self, api_key: str, model: str = "gemini-1.5-flash"):
         self.api_key = api_key
         self.model = model
         self.api_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
@@ -98,12 +98,12 @@ class ContentGenerator:
                 headers=headers, 
                 params=params, 
                 json=data, 
-                timeout=90
+                timeout=120
             )
             
             if response.status_code == 429:
-                print("Rate limit exceeded. Waiting 60 seconds...")
-                time.sleep(60)
+                print("Rate limit exceeded. Waiting 120 seconds...")
+                time.sleep(120)
                 return None
             elif response.status_code != 200:
                 print(f"API error: {response.status_code}")
@@ -125,7 +125,7 @@ class ContentGenerator:
                 return None
                 
         except requests.exceptions.Timeout:
-            print("Request timeout (90s). Gemini is slow today.")
+            print("Request timeout (120s).")
             return None
         except Exception as e:
             print(f"Error: {e}")
