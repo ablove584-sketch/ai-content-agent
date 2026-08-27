@@ -1,4 +1,163 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        INSERT INTO runs (started_at, finished_at, status, attempts, error_message)
+#!/usr/bin/env python3
+"""
+Database Manager - SQLite for content storage
+"""
+
+import sqlite3
+import os
+from datetime import datetime
+from typing import List, Dict, Optional, Any
+
+# Database path
+DB_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+DB_PATH = os.path.join(DB_DIR, "content.db")
+
+
+def initialize_database():
+    """Create database tables if they don't exist"""
+    os.makedirs(DB_DIR, exist_ok=True)
+    
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    # Create posts table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            topic TEXT NOT NULL,
+            angle TEXT NOT NULL,
+            core_idea TEXT NOT NULL,
+            keywords TEXT NOT NULL,
+            content TEXT NOT NULL,
+            hashtags TEXT NOT NULL,
+            fingerprint TEXT NOT NULL UNIQUE,
+            duplicate_score REAL DEFAULT 0.0,
+            published_at TEXT NOT NULL,
+            platform TEXT NOT NULL DEFAULT 'telegram',
+            status TEXT NOT NULL DEFAULT 'published'
+        )
+    ''')
+    
+    # Create runs table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS runs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            started_at TEXT NOT NULL,
+            finished_at TEXT,
+            status TEXT NOT NULL DEFAULT 'running',
+            attempts INTEGER DEFAULT 0,
+            error_message TEXT
+        )
+    ''')
+    
+    conn.commit()
+    conn.close()
+    print(f"✓ Database initialized at: {DB_PATH}")
+
+
+def get_recent_posts(limit=100):
+    """Get recent posts for duplicate detection"""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        SELECT id, title, topic, angle, core_idea, keywords, content, hashtags, fingerprint
+        FROM posts
+        ORDER BY published_at DESC
+        LIMIT ?
+    ''', (limit,))
+    
+    posts = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    
+    return posts
+
+
+def save_post(title, topic, angle, core_idea, keywords, content, hashtags, fingerprint, duplicate_score=0.0, platform="telegram", status="published"):
+    """Save a new post to the database"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute('''
+            INSERT INTO posts 
+            (title, topic, angle, core_idea, keywords, content, hashtags, fingerprint, duplicate_score, published_at, platform, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            title, topic, angle, core_idea,
+            ",".join(keywords),
+            content,
+            ",".join(hashtags),
+            fingerprint,
+            duplicate_score,
+            datetime.utcnow().isoformat(),
+            platform,
+            status
+        ))
+        
+        conn.commit()
+        post_id = cursor.lastrowid
+        print(f"✓ Post saved with ID: {post_id}")
+        return post_id
+        
+    except sqlite3.IntegrityError as e:
+        print(f" Failed to save post: {e}")
+        return -1
+        
+    finally:
+        conn.close()
+
+
+def save_run(started_at, status="running", attempts=0, error_message=None):
+    """Save a run record"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute('''
+            INSERT INTO runs (started_at, finished_at, status, attempts, error_message)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (
+            started_at,
+            datetime.utcnow().isoformat(),
+            status,
+            attempts,
+            error_message
+        ))
+        
+        conn.commit()
+        run_id = cursor.lastrowid
+        print(f"✓ Run saved with ID: {run_id}")
+        return run_id
+        
+    except Exception as e:
+        print(f"❌ Failed to save run: {e}")
+        return -1
+        
+    finally:
+        conn.close()
+
+
+def get_post_count():
+    """Get total number of posts"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM posts")
+    count = cursor.fetchone()[0]
+    conn.close()
+    return count
+
+
+def get_run_count():
+    """Get total number of runs"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM runs")
+    count = cursor.fetchone()[0]
+    conn.close()
+    return count                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      INSERT INTO runs (started_at, finished_at, status, attempts, error_message)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     VALUES (?, ?, ?, ?, ?)
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             """, (
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         started_at,
