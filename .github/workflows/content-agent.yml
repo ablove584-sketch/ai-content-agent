@@ -2,10 +2,8 @@ name: AI Content Agent
 
 on:
   schedule:
-    # Run every 10 minutes
     - cron: '*/10 * * * *'
   workflow_dispatch:
-    # Allow manual triggering
 
 permissions:
   contents: write
@@ -34,12 +32,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Debug - Show environment
-        run: |
-          pwd
-          find . -maxdepth 3 -type f | sort
-          test -f main.py && echo "✓ main.py found in root" || echo " ERROR: main.py not found in root"
-      
       - name: Run Content Agent
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -58,24 +50,6 @@ jobs:
         run: |
           python main.py
       
-      - name: Commit and push database changes
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          
-          # Pull latest changes first
-          git pull --rebase --autostash || true
-          
-          git add data/content.db
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Update content database [auto]"
-            git push || true
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
       - name: Upload database as artifact
         uses: actions/upload-artifact@v4
         if: always()
@@ -83,3 +57,4 @@ jobs:
           name: content-database
           path: data/content.db
           retention-days: 7
+          overwrite: true
