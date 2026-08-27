@@ -1,29 +1,36 @@
 import os
 import json
 import re
-import time
 import requests
 from typing import Dict, Any, List, Optional
 from src.config import Config
 
 class ContentGenerator:
-    def __init__(self, api_key: str, model: str = "gemini-1.5-flash"):
-        self.api_key = api_key
-        self.model = model
-        self.api_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+    def __init__(self, config: Config):
+        self.config = config
+        self.deepseek_key = os.getenv("DEEPSEEK_API_KEY", "")
+        self.gemini_key = config.GEMINI_API_KEY
+        
+        # Use DeepSeek if available, fallback to Gemini
+        if self.deepseek_key:
+            self.api_url = "https://api.deepseek.com/chat/completions"
+            self.use_deepseek = True
+        else:
+            self.api_url = f"https://generativelanguage.googleapis.com/v1beta/models/{config.GEMINI_MODEL}:generateContent"
+            self.use_deepseek = False
     
-    def build_prompt(self, config: Config, recent_posts: List[Dict[str, Any]]) -> str:
+    def build_prompt(self, recent_posts: List[Dict[str, Any]]) -> str:
         memory_context = ""
         if recent_posts:
             memory_context = "\n\n**المنشورات السابقة:**\n"
-            for i, post in enumerate(recent_posts[:config.MEMORY_CONTEXT_LIMIT], 1):
+            for i, post in enumerate(recent_posts[:self.config.MEMORY_CONTEXT_LIMIT], 1):
                 memory_context += f"\n{i}. {post.get('title', '')}\n"
         
-        prompt = f"""أنت كاتب محتوى محترف تنشئ منشورات فريدة لـ {config.CONTENT_AUDIENCE}.
+        prompt = f"""أنت كاتب محتوى محترف تنشئ منشورات فريدة لـ {self.config.CONTENT_AUDIENCE}.
 
-**الموضوع:** {config.CONTENT_TOPIC}
-**الأسلوب:** {config.CONTENT_STYLE}
-**اللغة:** {config.CONTENT_LANGUAGE}
+**الموضوع:** {self.config.CONTENT_TOPIC}
+**الأسلوب:** {self.config.CONTENT_STYLE}
+**اللغة:** {self.config.CONTENT_LANGUAGE}
 
 {memory_context}
 
@@ -48,11 +55,7 @@ class ContentGenerator:
     def extract_json(self, text: str) -> Optional[Dict[str, Any]]:
         text = text.strip()
         
-        try:
-            return json.loads(text)
-        except:
-            pass
-        
+        # Remove markdown
         text = re.sub(r'```json\s*', '', text)
         text = re.sub(r'```\s*', '', text)
         text = text.strip()
@@ -62,6 +65,7 @@ class ContentGenerator:
         except:
             pass
         
+        # Find JSON
         json_match = re.search(r'\{[\s\S]*\}', text)
         if json_match:
             try:
@@ -72,14 +76,68 @@ class ContentGenerator:
         return None
     
     def generate(self, config: Config, recent_posts: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
-        if not self.api_key:
-            print("GEMINI_API_KEY not set")
+        if not self.deepseek_key and not self.gemini_key:
+            print("No API key set")
             return None
         
-        prompt = self.build_prompt(config, recent_posts)
+        prompt = self.build_prompt(recent_posts)
         
+        if self.use_deepseek:
+            return self.generate_with_deepseek(prompt)
+        else:
+            return self.generate_with_gemini(prompt)
+    
+    def generate_with_deepseek(self, prompt: str) -> Optional[Dict[str, Any]]:
+        """Generate using DeepSeek API"""
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.deepseek_key}"
+        }
+        
+        data = {
+            "model": "deepseek-chat",
+            "messages": [
+                {"role": "system", "content": "أنت كاتب محتوى محترف. أعد النتيجة بصيغة JSON فقط."},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.8,
+            "max_tokens": 2048,
+            "stream": False
+        }
+        
+        try:
+            print("Using DeepSeek API...")
+            response = requests.post(
+                self.api_url, 
+                headers=headers, 
+                json=data, 
+                timeout=60
+            )
+            
+            if response.status_code == 429:
+                print("DeepSeek rate limit exceeded.")
+                return None
+            elif response.status_code != 200:
+                print(f"DeepSeek API error: {response.status_code}")
+                print(f"Response: {response.text[:200]}")
+                return None
+            
+            result = response.json()
+            content_text = result["choices"][0]["message"]["content"]
+            
+            generated = self.extract_json(content_text)
+            if generated:
+                print("✓ Content generated with DeepSeek")
+            return generated
+                
+        except Exception as e:
+            print(f"DeepSeek error: {e}")
+            return None
+    
+    def generate_with_gemini(self, prompt: str) -> Optional[Dict[str, Any]]:
+        """Generate using Gemini API (fallback)"""
         headers = {"Content-Type": "application/json"}
-        params = {"key": self.api_key}
+        params = {"key": self.gemini_key}
         
         data = {
             "contents": [{"parts": [{"text": prompt}]}],
@@ -92,7 +150,7 @@ class ContentGenerator:
         }
         
         try:
-            print("Sending request to Gemini API...")
+            print("Using Gemini API (fallback)...")
             response = requests.post(
                 self.api_url, 
                 headers=headers, 
@@ -101,36 +159,24 @@ class ContentGenerator:
                 timeout=120
             )
             
-            if response.status_code == 429:
-                print("Rate limit exceeded. Waiting 120 seconds...")
-                time.sleep(120)
-                return None
-            elif response.status_code != 200:
-                print(f"API error: {response.status_code}")
+            if response.status_code != 200:
+                print(f"Gemini API error: {response.status_code}")
                 return None
             
             result = response.json()
             
             if "candidates" in result and len(result["candidates"]) > 0:
                 content_text = result["candidates"][0]["content"]["parts"][0]["text"]
-                generated_content = self.extract_json(content_text)
-                
-                if not generated_content:
-                    print("Failed to parse JSON")
-                    return None
-                
-                print("Content generated successfully")
-                return generated_content
-            else:
-                return None
-                
-        except requests.exceptions.Timeout:
-            print("Request timeout (120s).")
+                generated = self.extract_json(content_text)
+                if generated:
+                    print("✓ Content generated with Gemini")
+                return generated
             return None
+                
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Gemini error: {e}")
             return None
 
 def generate_content(config: Config, recent_posts: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
-    generator = ContentGenerator(config.GEMINI_API_KEY, config.GEMINI_MODEL)
+    generator = ContentGenerator(config)
     return generator.generate(config, recent_posts)
