@@ -6,14 +6,14 @@ import random
 from typing import Dict, Any, List, Optional
 from src.config import Config
 
-# قائمة النماذج المجانية على OpenRouter (مرتبة حسب الجودة)
+# قائمة النماذج المجانية الصحيحة على OpenRouter (2026)
 OPENROUTER_FREE_MODELS = [
-    "meta-llama/llama-3.1-8b-instruct:free",  # الأفضل
-    "meta-llama/llama-3-8b-instruct:free",    # جيد جداً
-    "google/gemma-7b-it:free",                # جيد
-    "mistralai/mistral-7b-instruct:free",     # جيد
-    "qwen/qwen-2-7b-instruct:free",           # جيد للعربية
-    "microsoft/phi-3-mini-128k-instruct:free", # سريع
+    "meta-llama/llama-3.1-8b-instruct:free",
+    "meta-llama/llama-3-8b-instruct:free",
+    "google/gemma-2-9b-it:free",
+    "mistralai/mistral-7b-instruct:free",
+    "qwen/qwen-2.5-7b-instruct:free",
+    "microsoft/phi-3.5-mini-instruct:free",
 ]
 
 class ContentGenerator:
@@ -23,7 +23,6 @@ class ContentGenerator:
         self.openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
         self.model = config.GEMINI_MODEL
         
-        # خلط النماذج عشوائياً لتوزيع الحمل
         self.openrouter_models = OPENROUTER_FREE_MODELS.copy()
         random.shuffle(self.openrouter_models)
         
@@ -92,18 +91,18 @@ class ContentGenerator:
 
         prompt = self.build_prompt(recent_posts)
 
-        # 1️⃣ حاول مع Gemini أولاً
+        # 1. Try Gemini first
         if self.gemini_key:
             print("\n Trying Gemini API...")
             result = self._generate_gemini(prompt)
             if result:
                 print("✅ Content generated with Gemini")
                 return result
-            print(" Gemini failed, trying OpenRouter...")
+            print("❌ Gemini failed, trying OpenRouter...")
 
-        # 2️⃣ حاول مع نماذج OpenRouter المجانية
+        # 2. Try OpenRouter models
         if self.openrouter_key:
-            print(f"\n Trying {len(self.openrouter_models)} OpenRouter free models...")
+            print(f"\n🟢 Trying {len(self.openrouter_models)} OpenRouter free models...")
             for i, model in enumerate(self.openrouter_models, 1):
                 print(f"\n  Attempt {i}/{len(self.openrouter_models)}: {model}")
                 result = self._generate_openrouter(prompt, model)
@@ -140,6 +139,7 @@ class ContentGenerator:
                 return None
             elif response.status_code != 200:
                 print(f"  API error: {response.status_code}")
+                print(f"  Response: {response.text[:200]}")
                 return None
 
             result = response.json()
@@ -173,6 +173,7 @@ class ContentGenerator:
 
             if response.status_code != 200:
                 print(f"    API error: {response.status_code}")
+                print(f"    Response: {response.text[:200]}")
                 return None
 
             result = response.json()
