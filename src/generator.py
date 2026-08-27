@@ -6,27 +6,14 @@ import time
 from typing import Dict, Any, List, Optional
 from src.config import Config
 
-# قائمة النماذج المجانية المتاحة حالياً على OpenRouter (2026)
-OPENROUTER_FREE_MODELS = [
-    "meta-llama/llama-3-8b-instruct:free",
-    "google/gemma-2-9b-it:free",
-    "mistralai/mistral-7b-instruct:free",
-    "qwen/qwen-2.5-7b-instruct:free",
-    "deepseek/deepseek-r1-distill-llama-8b:free",
-    "nousresearch/hermes-3-llama-3.1-8b:free",
-]
-
 class ContentGenerator:
     def __init__(self, config: Config):
         self.config = config
         self.gemini_key = config.GEMINI_API_KEY
-        self.openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
         self.model = config.GEMINI_MODEL
         
         print(f"Gemini Model: {self.model}")
-        if self.openrouter_key:
-            print(f"OpenRouter: {len(OPENROUTER_FREE_MODELS)} free models available")
-            print("Models: " + ", ".join(OPENROUTER_FREE_MODELS[:3]) + "...")
+        print("Strategy: Gemini only with retry logic")
 
     def build_prompt(self, recent_posts: List[Dict[str, Any]]) -> str:
         memory = ""
@@ -82,34 +69,28 @@ class ContentGenerator:
         return None
 
     def generate(self, config: Config, recent_posts: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
-        if not self.gemini_key and not self.openrouter_key:
-            print("No API keys configured")
+        if not self.gemini_key:
+            print("No Gemini API key configured")
             return None
 
         prompt = self.build_prompt(recent_posts)
 
-        # 1. Try Gemini first
-        if self.gemini_key:
-            print("\n Trying Gemini API...")
+        # Try Gemini with retries
+        max_retries = 6
+        for attempt in range(1, max_retries + 1):
+            print(f"\n Attempt {attempt}/{max_retries} with Gemini...")
             result = self._generate_gemini(prompt)
+            
             if result:
-                print("✅ Content generated with Gemini")
+                print(f"✅ Content generated with Gemini (attempt {attempt})")
                 return result
-            print("❌ Gemini failed, trying OpenRouter...")
+            
+            if attempt < max_retries:
+                wait_time = 30  # انتظر 30 ثانية بين المحاولات
+                print(f"  Waiting {wait_time}s before retry...")
+                time.sleep(wait_time)
 
-        # 2. Try OpenRouter models
-        if self.openrouter_key:
-            print(f"\n🟢 Trying {len(OPENROUTER_FREE_MODELS)} OpenRouter free models...")
-            for i, model in enumerate(OPENROUTER_FREE_MODELS, 1):
-                print(f"\n  Attempt {i}/{len(OPENROUTER_FREE_MODELS)}: {model}")
-                result = self._generate_openrouter(prompt, model)
-                if result:
-                    print(f"✅ Content generated with OpenRouter ({model})")
-                    return result
-                print(f"  ❌ {model} failed, trying next...")
-                time.sleep(2)  # انتظار قصير بين المحاولات
-
-        print("\n All models failed")
+        print("\n❌ All attempts failed")
         return None
 
     def _generate_gemini(self, prompt: str) -> Optional[Dict[str, Any]]:
@@ -147,38 +128,6 @@ class ContentGenerator:
             return None
         except Exception as e:
             print(f"  Error: {e}")
-            return None
-
-    def _generate_openrouter(self, prompt: str, model: str) -> Optional[Dict[str, Any]]:
-        url = "https://openrouter.ai/api/v1/chat/completions"
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.openrouter_key}",
-            "HTTP-Referer": "https://github.com/ablove584-sketch/ai-content-agent",
-        }
-        data = {
-            "model": model,
-            "messages": [
-                {"role": "system", "content": "أنت كاتب محتوى محترف. أعد النتيجة بصيغة JSON فقط."},
-                {"role": "user", "content": prompt}
-            ],
-            "temperature": 0.8,
-            "max_tokens": 2048,
-        }
-
-        try:
-            response = requests.post(url, headers=headers, json=data, timeout=90)
-
-            if response.status_code != 200:
-                print(f"    API error: {response.status_code}")
-                print(f"    Response: {response.text[:200]}")
-                return None
-
-            result = response.json()
-            content_text = result["choices"][0]["message"]["content"]
-            return self.extract_json(content_text)
-        except Exception as e:
-            print(f"    Error: {e}")
             return None
 
 

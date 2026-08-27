@@ -2,7 +2,8 @@ name: AI Content Agent
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    # كل ساعة (أكثر موثوقية مع Gemini free tier)
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -31,19 +32,20 @@ jobs:
       - name: Run Content Agent
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-1.5-flash' }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           CONTENT_LANGUAGE: ${{ vars.CONTENT_LANGUAGE || 'ar' }}
-          CONTENT_TOPIC: ${{ vars.CONTENT_TOPIC || 'العلوم والتقنية وتطوير الذات' }}
+          CONTENT_TOPICS: ${{ vars.CONTENT_TOPICS }}
           CONTENT_STYLE: ${{ vars.CONTENT_STYLE || 'احترافي، مفيد، واضح' }}
           CONTENT_AUDIENCE: ${{ vars.CONTENT_AUDIENCE || 'الجمهور العربي' }}
           DUPLICATE_THRESHOLD: ${{ vars.DUPLICATE_THRESHOLD || '0.78' }}
-          MAX_GENERATION_ATTEMPTS: ${{ vars.MAX_GENERATION_ATTEMPTS || '3' }}
+          MAX_GENERATION_ATTEMPTS: ${{ vars.MAX_GENERATION_ATTEMPTS || '6' }}
           MEMORY_CONTEXT_LIMIT: ${{ vars.MEMORY_CONTEXT_LIMIT || '100' }}
           MAX_HASHTAGS: ${{ vars.MAX_HASHTAGS || '5' }}
           DRY_RUN: ${{ vars.DRY_RUN || 'false' }}
+          PUBLISH_HOURS: ${{ vars.PUBLISH_HOURS || '' }}
+          PUBLISH_DAYS: ${{ vars.PUBLISH_DAYS || '' }}
         run: |
           python main.py
 
