@@ -38,7 +38,7 @@ jobs:
         run: |
           pwd
           find . -maxdepth 3 -type f | sort
-          test -f main.py && echo "✓ main.py found in root" || echo "❌ ERROR: main.py not found in root"
+          test -f main.py && echo "✓ main.py found in root" || echo " ERROR: main.py not found in root"
       
       - name: Run Content Agent
         env:
@@ -62,12 +62,16 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # Pull latest changes first
+          git pull --rebase --autostash || true
+          
           git add data/content.db
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
             git commit -m "Update content database [auto]"
-            git push
+            git push || true
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
