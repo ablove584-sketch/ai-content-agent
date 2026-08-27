@@ -2,8 +2,19 @@ import os
 import json
 import re
 import requests
+import random
 from typing import Dict, Any, List, Optional
 from src.config import Config
+
+# قائمة النماذج المجانية على OpenRouter (مرتبة حسب الجودة)
+OPENROUTER_FREE_MODELS = [
+    "meta-llama/llama-3.1-8b-instruct:free",  # الأفضل
+    "meta-llama/llama-3-8b-instruct:free",    # جيد جداً
+    "google/gemma-7b-it:free",                # جيد
+    "mistralai/mistral-7b-instruct:free",     # جيد
+    "qwen/qwen-2-7b-instruct:free",           # جيد للعربية
+    "microsoft/phi-3-mini-128k-instruct:free", # سريع
+]
 
 class ContentGenerator:
     def __init__(self, config: Config):
@@ -11,9 +22,15 @@ class ContentGenerator:
         self.gemini_key = config.GEMINI_API_KEY
         self.openrouter_key = os.getenv("OPENROUTER_API_KEY", "")
         self.model = config.GEMINI_MODEL
-        print(f"Model: {self.model}")
+        
+        # خلط النماذج عشوائياً لتوزيع الحمل
+        self.openrouter_models = OPENROUTER_FREE_MODELS.copy()
+        random.shuffle(self.openrouter_models)
+        
+        print(f"Gemini Model: {self.model}")
         if self.openrouter_key:
-            print("OpenRouter fallback: enabled")
+            print(f"OpenRouter: {len(self.openrouter_models)} free models available")
+            print("Models: " + ", ".join(self.openrouter_models[:3]) + "...")
 
     def build_prompt(self, recent_posts: List[Dict[str, Any]]) -> str:
         memory = ""
@@ -49,7 +66,6 @@ class ContentGenerator:
 
     def extract_json(self, text: str) -> Optional[Dict[str, Any]]:
         text = text.strip()
-        # Remove markdown code blocks
         text = re.sub(r'^```json\s*', '', text, flags=re.MULTILINE)
         text = re.sub(r'^```\s*', '', text, flags=re.MULTILINE)
         text = re.sub(r'```$', '', text, flags=re.MULTILINE)
@@ -60,7 +76,6 @@ class ContentGenerator:
         except:
             pass
 
-        # Find JSON object
         match = re.search(r'\{[\s\S]*\}', text)
         if match:
             try:
@@ -77,20 +92,27 @@ class ContentGenerator:
 
         prompt = self.build_prompt(recent_posts)
 
-        # Try Gemini first
+        # 1️⃣ حاول مع Gemini أولاً
         if self.gemini_key:
+            print("\n Trying Gemini API...")
             result = self._generate_gemini(prompt)
             if result:
-                print("Content generated with Gemini")
+                print("✅ Content generated with Gemini")
                 return result
+            print(" Gemini failed, trying OpenRouter...")
 
-        # Fallback to OpenRouter
+        # 2️⃣ حاول مع نماذج OpenRouter المجانية
         if self.openrouter_key:
-            result = self._generate_openrouter(prompt)
-            if result:
-                print("Content generated with OpenRouter")
-                return result
+            print(f"\n Trying {len(self.openrouter_models)} OpenRouter free models...")
+            for i, model in enumerate(self.openrouter_models, 1):
+                print(f"\n  Attempt {i}/{len(self.openrouter_models)}: {model}")
+                result = self._generate_openrouter(prompt, model)
+                if result:
+                    print(f"✅ Content generated with OpenRouter ({model})")
+                    return result
+                print(f"  ❌ {model} failed, trying next...")
 
+        print("\n❌ All models failed")
         return None
 
     def _generate_gemini(self, prompt: str) -> Optional[Dict[str, Any]]:
@@ -108,15 +130,16 @@ class ContentGenerator:
         }
 
         try:
-            print("Sending request to Gemini API...")
             response = requests.post(url, headers=headers, params=params, json=data, timeout=90)
 
             if response.status_code == 429:
-                print("Gemini rate limit exceeded")
+                print("  Rate limit exceeded")
+                return None
+            elif response.status_code == 503:
+                print("  Service unavailable (high demand)")
                 return None
             elif response.status_code != 200:
-                print(f"Gemini API error: {response.status_code}")
-                print(f"Response: {response.text[:200]}")
+                print(f"  API error: {response.status_code}")
                 return None
 
             result = response.json()
@@ -125,10 +148,10 @@ class ContentGenerator:
                 return self.extract_json(content_text)
             return None
         except Exception as e:
-            print(f"Gemini error: {e}")
+            print(f"  Error: {e}")
             return None
 
-    def _generate_openrouter(self, prompt: str) -> Optional[Dict[str, Any]]:
+    def _generate_openrouter(self, prompt: str, model: str) -> Optional[Dict[str, Any]]:
         url = "https://openrouter.ai/api/v1/chat/completions"
         headers = {
             "Content-Type": "application/json",
@@ -136,7 +159,7 @@ class ContentGenerator:
             "HTTP-Referer": "https://github.com/ablove584-sketch/ai-content-agent",
         }
         data = {
-            "model": "meta-llama/llama-3-8b-instruct:free",
+            "model": model,
             "messages": [
                 {"role": "system", "content": "أنت كاتب محتوى محترف. أعد النتيجة بصيغة JSON فقط."},
                 {"role": "user", "content": prompt}
@@ -146,18 +169,17 @@ class ContentGenerator:
         }
 
         try:
-            print("Sending request to OpenRouter API...")
             response = requests.post(url, headers=headers, json=data, timeout=90)
 
             if response.status_code != 200:
-                print(f"OpenRouter API error: {response.status_code}")
+                print(f"    API error: {response.status_code}")
                 return None
 
             result = response.json()
             content_text = result["choices"][0]["message"]["content"]
             return self.extract_json(content_text)
         except Exception as e:
-            print(f"OpenRouter error: {e}")
+            print(f"    Error: {e}")
             return None
 
 
