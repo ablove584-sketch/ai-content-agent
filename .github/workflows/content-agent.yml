@@ -1,0 +1,81 @@
+name: AI Content Agent
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    # Allow manual triggering
+
+permissions:
+  contents: write
+
+concurrency:
+  group: content-agent
+  cancel-in-progress: false
+
+jobs:
+  run-content-agent:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Debug - Show environment
+        run: |
+          pwd
+          find . -maxdepth 3 -type f | sort
+          test -f main.py && echo "✓ main.py found in root" || echo "❌ ERROR: main.py not found in root"
+      
+      - name: Run Content Agent
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.0-flash-exp' }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          CONTENT_LANGUAGE: ${{ vars.CONTENT_LANGUAGE || 'ar' }}
+          CONTENT_TOPIC: ${{ vars.CONTENT_TOPIC || 'العلوم والتقنية وتطوير الذات' }}
+          CONTENT_STYLE: ${{ vars.CONTENT_STYLE || 'احترافي، مفيد، واضح، طبيعي' }}
+          CONTENT_AUDIENCE: ${{ vars.CONTENT_AUDIENCE || 'الجمهور العربي' }}
+          DUPLICATE_THRESHOLD: ${{ vars.DUPLICATE_THRESHOLD || '0.78' }}
+          MAX_GENERATION_ATTEMPTS: ${{ vars.MAX_GENERATION_ATTEMPTS || '6' }}
+          MEMORY_CONTEXT_LIMIT: ${{ vars.MEMORY_CONTEXT_LIMIT || '100' }}
+          MAX_HASHTAGS: ${{ vars.MAX_HASHTAGS || '5' }}
+          DRY_RUN: ${{ vars.DRY_RUN || 'true' }}
+        run: |
+          python main.py
+      
+      - name: Commit and push database changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/content.db
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update content database [auto]"
+            git push
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload database as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: content-database
+          path: data/content.db
+          retention-days: 7
