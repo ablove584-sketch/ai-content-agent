@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import time
 import requests
 from typing import Dict, Any, List, Optional
 from src.config import Config
@@ -47,13 +48,11 @@ class ContentGenerator:
     def extract_json(self, text: str) -> Optional[Dict[str, Any]]:
         text = text.strip()
         
-        # Method 1: Direct parsing
         try:
             return json.loads(text)
         except:
             pass
         
-        # Method 2: Remove markdown
         text = re.sub(r'```json\s*', '', text)
         text = re.sub(r'```\s*', '', text)
         text = text.strip()
@@ -63,7 +62,6 @@ class ContentGenerator:
         except:
             pass
         
-        # Method 3: Find JSON
         json_match = re.search(r'\{[\s\S]*\}', text)
         if json_match:
             try:
@@ -95,9 +93,19 @@ class ContentGenerator:
         
         try:
             print("Sending request to Gemini API...")
-            response = requests.post(self.api_url, headers=headers, params=params, json=data, timeout=30)
+            response = requests.post(
+                self.api_url, 
+                headers=headers, 
+                params=params, 
+                json=data, 
+                timeout=90
+            )
             
-            if response.status_code != 200:
+            if response.status_code == 429:
+                print("Rate limit exceeded. Waiting 60 seconds...")
+                time.sleep(60)
+                return None
+            elif response.status_code != 200:
                 print(f"API error: {response.status_code}")
                 return None
             
@@ -116,6 +124,9 @@ class ContentGenerator:
             else:
                 return None
                 
+        except requests.exceptions.Timeout:
+            print("Request timeout (90s). Gemini is slow today.")
+            return None
         except Exception as e:
             print(f"Error: {e}")
             return None
