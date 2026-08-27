@@ -2,7 +2,7 @@ name: AI Content Agent
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -11,33 +11,33 @@ permissions:
 jobs:
   run-content-agent:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Run Content Agent
         env:
-          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-1.5-flash' }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           CONTENT_LANGUAGE: ${{ vars.CONTENT_LANGUAGE || 'ar' }}
           CONTENT_TOPIC: ${{ vars.CONTENT_TOPIC || 'العلوم والتقنية وتطوير الذات' }}
-          CONTENT_STYLE: ${{ vars.CONTENT_STYLE || 'احترافي، مفيد، واضح، طبيعي' }}
+          CONTENT_STYLE: ${{ vars.CONTENT_STYLE || 'احترافي، مفيد، واضح' }}
           CONTENT_AUDIENCE: ${{ vars.CONTENT_AUDIENCE || 'الجمهور العربي' }}
           DUPLICATE_THRESHOLD: ${{ vars.DUPLICATE_THRESHOLD || '0.78' }}
           MAX_GENERATION_ATTEMPTS: ${{ vars.MAX_GENERATION_ATTEMPTS || '3' }}
@@ -46,7 +46,7 @@ jobs:
           DRY_RUN: ${{ vars.DRY_RUN || 'false' }}
         run: |
           python main.py
-      
+
       - name: Upload database as artifact
         uses: actions/upload-artifact@v4
         if: always()
