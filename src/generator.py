@@ -3,6 +3,7 @@ import json
 import re
 import requests
 import time
+import random
 from typing import Dict, Any, List, Optional
 from src.config import Config
 
@@ -12,8 +13,17 @@ class ContentGenerator:
         self.gemini_key = config.GEMINI_API_KEY
         self.model = config.GEMINI_MODEL
         
+        # قراءة نوع المحتوى من البيئة
+        self.content_type = os.getenv("CONTENT_TYPE", "random")
+        self.book_name = os.getenv("BOOK_NAME", "")
+        self.custom_topic = os.getenv("CUSTOM_TOPIC", "")
+        
         print(f"Gemini Model: {self.model}")
-        print("Strategy: Gemini only with retry logic")
+        print(f"Content Type: {self.content_type}")
+        if self.book_name:
+            print(f"Book: {self.book_name}")
+        if self.custom_topic:
+            print(f"Custom Topic: {self.custom_topic}")
 
     def build_prompt(self, recent_posts: List[Dict[str, Any]]) -> str:
         memory = ""
@@ -23,10 +33,27 @@ class ContentGenerator:
                 memory += f"\n{i}. {post.get('title', '')}\n"
                 memory += f"   الفكرة: {post.get('core_idea', '')}\n"
 
+        # تحديد الموضوع بناءً على النوع
+        if self.content_type == "book_summary" and self.book_name:
+            topic = f"ملخص كتاب: {self.book_name}"
+            style = "ملخص احترافي يبرز الأفكار الرئيسية والدروس المستفادة"
+        elif self.custom_topic:
+            topic = self.custom_topic
+            style = self.config.CONTENT_STYLE
+        else:
+            topic = self.config.CONTENT_TOPIC
+            style = self.config.CONTENT_STYLE
+
+        # تخصيص الـ prompt حسب النوع
+        type_instructions = self._get_type_instructions()
+
         return f"""أنت كاتب محتوى محترف تنشئ منشورات فريدة لـ {self.config.CONTENT_AUDIENCE}.
 
-**الموضوع:** {self.config.CONTENT_TOPIC}
-**الأسلوب:** {self.config.CONTENT_STYLE}
+**نوع المحتوى:** {self.content_type}
+{type_instructions}
+
+**الموضوع:** {topic}
+**الأسلوب:** {style}
 **اللغة:** {self.config.CONTENT_LANGUAGE}
 
 {memory}
@@ -46,6 +73,23 @@ class ContentGenerator:
   "hashtags": ["#هاشتاج1", "#هاشتاج2"]
 }}
 ```"""
+
+    def _get_type_instructions(self) -> str:
+        """تعليمات مخصصة حسب نوع المحتوى"""
+        instructions = {
+            "book_summary": "اكتب ملخصاً احترافياً للكتاب يبرز:\n- الأفكار الرئيسية\n- الدروس المستفادة\n- اقتباسات ملهمة\n- تطبيق عملي للأفكار",
+            "article": "اكتب مقالاً احترافياً يحتوي على:\n- مقدمة جذابة\n- نقاط رئيسية منظمة\n- خاتمة قوية",
+            "story": "اكتب قصة مشوقة تحتوي على:\n- بداية مثيرة\n- تطور الأحداث\n- نهاية مؤثرة أو درس مستفاد",
+            "facts": "اكتب منشوراً يحتوي على:\n- 5-7 حقائق غريبة ومثيرة\n- شرح مختصر لكل حقيقة\n- مصدر أو سياق",
+            "tips": "اكتب منشوراً يحتوي على:\n- 5-10 نصائح عملية\n- شرح مختصر لكل نصيحة\n- أمثلة تطبيقية",
+            "news": "اكتب خبراً تقنياً يحتوي على:\n- العنوان الرئيسي\n- التفاصيل المهمة\n- التأثير على المستقبل",
+            "philosophy": "اكتب منشوراً فلسفياً يحتوي على:\n- سؤال فلسفي عميق\n- تحليل متعدد الزوايا\n- استنتاج ملهم",
+            "history": "اكتب منشوراً تاريخياً يحتوي على:\n- الحدث التاريخي\n- السياق والظروف\n- الدروس المستفادة",
+            "science": "اكتب منشوراً علمياً يحتوي على:\n- الاكتشاف أو النظرية\n- الشرح المبسط\n- التطبيقات العملية",
+            "psychology": "اكتب منشوراً عن علم النفس يحتوي على:\n- المفهوم النفسي\n- أمثلة من الحياة\n- تطبيقات عملية",
+            "random": "اكتب منشوراً متنوعاً ومفيداً"
+        }
+        return instructions.get(self.content_type, "اكتب منشوراً احترافياً ومفيداً")
 
     def extract_json(self, text: str) -> Optional[Dict[str, Any]]:
         text = text.strip()
@@ -75,7 +119,6 @@ class ContentGenerator:
 
         prompt = self.build_prompt(recent_posts)
 
-        # Try Gemini with retries
         max_retries = 6
         for attempt in range(1, max_retries + 1):
             print(f"\n Attempt {attempt}/{max_retries} with Gemini...")
@@ -86,7 +129,7 @@ class ContentGenerator:
                 return result
             
             if attempt < max_retries:
-                wait_time = 30  # انتظر 30 ثانية بين المحاولات
+                wait_time = 30
                 print(f"  Waiting {wait_time}s before retry...")
                 time.sleep(wait_time)
 
