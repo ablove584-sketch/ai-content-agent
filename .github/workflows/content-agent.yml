@@ -65,6 +65,7 @@ jobs:
           CONTENT_TYPE: ${{ github.event.inputs.content_type || 'random' }}
           BOOK_NAME: ${{ github.event.inputs.book_name || '' }}
           CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
+          SAVE_TO_JSON: 'true'
         run: |
           python main.py
           echo "workflow_id=${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
@@ -88,25 +89,60 @@ jobs:
           else:
               posts = []
           
-          # قراءة المنشور الأخير من قاعدة البيانات
+          # قراءة البيانات من البيئة
           content_type = os.getenv("CONTENT_TYPE", "random")
-          book_name = os.getenv("BOOK_NAME", "")
-          custom_topic = os.getenv("CUSTOM_TOPIC", "")
           workflow_id = os.getenv("WORKFLOW_ID", "unknown")
+          
+          # قراءة المنشور من قاعدة البيانات (آخر منشور)
+          db_path = 'data/content.db'
+          title = "منشور جديد"
+          content = "تم إنشاء محتوى جديد"
+          topic = ""
+          angle = ""
+          core_idea = ""
+          keywords = []
+          hashtags = []
+          
+          if os.path.exists(db_path):
+              import sqlite3
+              conn = sqlite3.connect(db_path)
+              conn.row_factory = sqlite3.Row
+              cursor = conn.cursor()
+              
+              # جلب آخر منشور
+              cursor.execute('''
+                  SELECT title, content, topic, angle, core_idea, keywords, hashtags 
+                  FROM posts 
+                  ORDER BY created_at DESC 
+                  LIMIT 1
+              ''')
+              
+              row = cursor.fetchone()
+              if row:
+                  title = row['title'] or title
+                  content = row['content'] or content
+                  topic = row['topic'] or topic
+                  angle = row['angle'] or angle
+                  core_idea = row['core_idea'] or core_idea
+                  keywords = json.loads(row['keywords'] or '[]') if row['keywords'] else []
+                  hashtags = json.loads(row['hashtags'] or '[]') if row['hashtags'] else []
+              
+              conn.close()
           
           # إنشاء منشور جديد
           new_post = {
               "id": len(posts) + 1,
-              "title": f"منشور جديد #{len(posts) + 1}",
-              "content": "تم إنشاء محتوى جديد بنجاح. يمكن عرض التفاصيل من خلال الرابط.",
-              "topic": custom_topic if custom_topic else (book_name if book_name else "موضوع عام"),
-              "angle": "زاوية جديدة",
-              "core_idea": "فكرة أساسية للمنشور",
-              "keywords": ["محتوى", "ذكاء اصطناعي", content_type],
-              "hashtags": ["#محتوى", "#ذكاء_اصطناعي"],
+              "title": title,
+              "content": content,
+              "topic": topic,
+              "angle": angle,
+              "core_idea": core_idea,
+              "keywords": keywords,
+              "hashtags": hashtags,
               "type": content_type,
               "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-              "url": f"https://github.com/{os.getenv('GITHUB_REPOSITORY')}/actions/runs/{workflow_id}"
+              "url": f"https://github.com/{os.getenv('GITHUB_REPOSITORY')}/actions/runs/{workflow_id}",
+              "reading_time": max(1, len(content.split()) // 200)
           }
           
           # إضافة المنشور الجديد في البداية
@@ -123,7 +159,8 @@ jobs:
               json.dump(posts, f, ensure_ascii=False, indent=2)
           
           print(f"✅ Saved {len(posts)} posts to {posts_file}")
-          print(f"Latest post: {new_post['title']}")
+          print(f"Latest post title: {title}")
+          print(f"Content length: {len(content)} characters")
           PYEOF
         env:
           WORKFLOW_ID: ${{ steps.run-agent.outputs.workflow_id }}
@@ -133,7 +170,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add docs/posts.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "📝 Update posts list - auto" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "📝 Update posts with real content" && git push)
         continue-on-error: true
 
       - name: Upload database as artifact
