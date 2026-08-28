@@ -283,7 +283,23 @@ function loadAds(){fetch('ads.json?t='+Date.now()).then(function(r){if(!r.ok)thr
 var h=$('heroSection');if(ad&&h){h.style.display='block';setText('heroTitle',ad.title);setText('heroDesc',ad.description);$('heroLink').href=ad.link||'#';}else if(h){h.style.display='none';}}).catch(function(){var h=$('heroSection');if(h)h.style.display='none';});}
 function loadPosts(){var cached=lsGet('postsCache','');if(cached){try{allPosts=JSON.parse(cached);renderAll();}catch(e){}}
 fetch('posts.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(posts){allPosts=posts;lsSet('postsCache',JSON.stringify(posts));renderAll();}).catch(function(){var c=$('postsContainer');if(c&&allPosts.length===0)c.innerHTML='<div class="empty">📭 تعذر التحميل</div>';});}
-function renderAll(){buildCats();shown=0;renderPosts(true);widgets();var d=allPosts[0]&&allPosts[0].date?allPosts[0].date:'-';setText('lastUpdate',d);}
+
+function detectType(p){
+if(p.type && p.type!=='random') return p.type;
+var t=((p.title||'')+' '+(p.content||'')+' '+(p.hashtags||[]).join(' ')+' '+(p.keywords||[]).join(' '));
+if(/فلسف|وجود|ماهية|أخلاقي|منطق|سقراط|أرسطو|كانط|هوية|ثيسيوس|مفارقة/.test(t))return 'philosophy';
+if(/قصة|حكاية|رواية|بطل|حلم|استيقظ|عجوز|طفل/.test(t))return 'story';
+if(/فيزياء|كيمياء|فضاء|كوكب|ذرة|بيولوج|دماغ|أينشتاين|نظرية|علم/.test(t))return 'science';
+if(/تاريخ|حضارة|فرعون|رومان|أندلس|خلافة|إمبراطورية|آثار/.test(t))return 'history';
+if(/نفس|سلوك|عادة|قلق|توتر|ثقة|عاطفي|عقلية/.test(t))return 'psychology';
+if(/كتاب|مؤلف|ملخص|قراءة|فصل/.test(t))return 'book_summary';
+if(/تقنية|برمج|ذكاء اصطناعي|خوارزم|بيانات|رقمي|إنترنت/.test(t))return 'news';
+if(/نصيح|خطوة|طريقة|مهارة|إنتاجية/.test(t))return 'tips';
+if(/حقيقة|معلومة|هل تعلم|غريب/.test(t))return 'facts';
+return 'article';
+}
+
+function renderAll(){allPosts.forEach(function(p){p.type=detectType(p);});buildCats();shown=0;renderPosts(true);widgets();var d=allPosts[0]&&allPosts[0].date?allPosts[0].date:'-';setText('lastUpdate',d);}
 $('searchBox').addEventListener('input',function(e){currentSearch=e.target.value;shown=0;renderPosts(true);});
 var obs=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){var l=$('moreLoader');if(l){l.remove();renderPosts(false);}}});},{threshold:0.1});
 setInterval(function(){var l=$('moreLoader');if(l)obs.observe(l);},500);
