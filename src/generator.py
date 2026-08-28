@@ -7,23 +7,63 @@ import random
 from typing import Dict, Any, List, Optional
 from src.config import Config
 
+# قائمة شاملة بجميع موديلات Gemini المعروفة
+ALL_GEMINI_MODELS = [
+    # الجيل الأحدث (2.5) - موصى به
+    "gemini-2.5-flash",
+    "gemini-2.5-pro",
+    "gemini-2.5-flash-lite",
+    
+    # الجيل الثاني (2.0)
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-lite",
+    "gemini-2.0-pro-exp",
+    
+    # الجيل الأول (1.5) - قد يكون متوقفاً
+    "gemini-1.5-pro",
+    "gemini-1.5-flash",
+    
+    # موديلات قديمة (غالباً متوقفة)
+    "gemini-1.0-pro",
+    "gemini-pro",
+]
+
+# موديلات سيتم تجاهلها نهائياً (معروفة بأنها متوقفة)
+KNOWN_DEPRECATED = {
+    "gemini-pro-vision",
+    "gemini-1.0-pro-vision",
+    "gemini-ultra",
+}
+
 class ContentGenerator:
     def __init__(self, config: Config):
         self.config = config
         self.gemini_key = config.GEMINI_API_KEY
-        self.model = config.GEMINI_MODEL
         
-        # قراءة نوع المحتوى من البيئة
-        self.content_type = os.getenv("CONTENT_TYPE", "random")
-        self.book_name = os.getenv("BOOK_NAME", "")
-        self.custom_topic = os.getenv("CUSTOM_TOPIC", "")
+        # قراءة قائمة الموديلات من البيئة
+        models_env = os.getenv("GEMINI_MODELS", "")
+        if models_env:
+            self.models = [m.strip() for m in models_env.split(",") if m.strip()]
+        else:
+            self.models = ALL_GEMINI_MODELS.copy()
         
-        print(f"Gemini Model: {self.model}")
-        print(f"Content Type: {self.content_type}")
-        if self.book_name:
-            print(f"Book: {self.book_name}")
-        if self.custom_topic:
-            print(f"Custom Topic: {self.custom_topic}")
+        # إزالة الموديلات المتوقفة المعروفة
+        self.models = [m for m in self.models if m not in KNOWN_DEPRECATED]
+        
+        # النموذج المفضل للبدء
+        preferred = os.getenv("GEMINI_MODEL", "")
+        if preferred and preferred in self.models:
+            self.current_model = preferred
+        else:
+            self.current_model = self.models[0] if self.models else "gemini-2.5-flash"
+        
+        # قائمة الموديلات التي فشلت في هذه الجلسة
+        self.failed_models = set()
+        
+        print(f"🤖 Total models: {len(self.models)}")
+        print(f"📋 Models list: {self.models}")
+        print(f"🎯 Starting with: {self.current_model}")
+        print(f" Strategy: Auto-fallback on failure")
 
     def build_prompt(self, recent_posts: List[Dict[str, Any]]) -> str:
         memory = ""
@@ -33,27 +73,27 @@ class ContentGenerator:
                 memory += f"\n{i}. {post.get('title', '')}\n"
                 memory += f"   الفكرة: {post.get('core_idea', '')}\n"
 
-        # تحديد الموضوع بناءً على النوع
-        if self.content_type == "book_summary" and self.book_name:
-            topic = f"ملخص كتاب: {self.book_name}"
-            style = "ملخص احترافي يبرز الأفكار الرئيسية والدروس المستفادة"
-        elif self.custom_topic:
-            topic = self.custom_topic
-            style = self.config.CONTENT_STYLE
+        content_type = os.getenv("CONTENT_TYPE", "random")
+        book_name = os.getenv("BOOK_NAME", "")
+        custom_topic = os.getenv("CUSTOM_TOPIC", "")
+
+        if content_type == "book_summary" and book_name:
+            topic = f"ملخص كتاب: {book_name}"
+            type_instruction = "اكتب ملخصاً احترافياً يبرز الأفكار الرئيسية والدروس المستفادة"
+        elif custom_topic:
+            topic = custom_topic
+            type_instruction = "اكتب محتوى احترافياً عن هذا الموضوع"
         else:
             topic = self.config.CONTENT_TOPIC
-            style = self.config.CONTENT_STYLE
-
-        # تخصيص الـ prompt حسب النوع
-        type_instructions = self._get_type_instructions()
+            type_instruction = "اكتب محتوى احترافياً ومفيداً"
 
         return f"""أنت كاتب محتوى محترف تنشئ منشورات فريدة لـ {self.config.CONTENT_AUDIENCE}.
 
-**نوع المحتوى:** {self.content_type}
-{type_instructions}
+**نوع المحتوى:** {content_type}
+{type_instruction}
 
 **الموضوع:** {topic}
-**الأسلوب:** {style}
+**الأسلوب:** {self.config.CONTENT_STYLE}
 **اللغة:** {self.config.CONTENT_LANGUAGE}
 
 {memory}
@@ -73,23 +113,6 @@ class ContentGenerator:
   "hashtags": ["#هاشتاج1", "#هاشتاج2"]
 }}
 ```"""
-
-    def _get_type_instructions(self) -> str:
-        """تعليمات مخصصة حسب نوع المحتوى"""
-        instructions = {
-            "book_summary": "اكتب ملخصاً احترافياً للكتاب يبرز:\n- الأفكار الرئيسية\n- الدروس المستفادة\n- اقتباسات ملهمة\n- تطبيق عملي للأفكار",
-            "article": "اكتب مقالاً احترافياً يحتوي على:\n- مقدمة جذابة\n- نقاط رئيسية منظمة\n- خاتمة قوية",
-            "story": "اكتب قصة مشوقة تحتوي على:\n- بداية مثيرة\n- تطور الأحداث\n- نهاية مؤثرة أو درس مستفاد",
-            "facts": "اكتب منشوراً يحتوي على:\n- 5-7 حقائق غريبة ومثيرة\n- شرح مختصر لكل حقيقة\n- مصدر أو سياق",
-            "tips": "اكتب منشوراً يحتوي على:\n- 5-10 نصائح عملية\n- شرح مختصر لكل نصيحة\n- أمثلة تطبيقية",
-            "news": "اكتب خبراً تقنياً يحتوي على:\n- العنوان الرئيسي\n- التفاصيل المهمة\n- التأثير على المستقبل",
-            "philosophy": "اكتب منشوراً فلسفياً يحتوي على:\n- سؤال فلسفي عميق\n- تحليل متعدد الزوايا\n- استنتاج ملهم",
-            "history": "اكتب منشوراً تاريخياً يحتوي على:\n- الحدث التاريخي\n- السياق والظروف\n- الدروس المستفادة",
-            "science": "اكتب منشوراً علمياً يحتوي على:\n- الاكتشاف أو النظرية\n- الشرح المبسط\n- التطبيقات العملية",
-            "psychology": "اكتب منشوراً عن علم النفس يحتوي على:\n- المفهوم النفسي\n- أمثلة من الحياة\n- تطبيقات عملية",
-            "random": "اكتب منشوراً متنوعاً ومفيداً"
-        }
-        return instructions.get(self.content_type, "اكتب منشوراً احترافياً ومفيداً")
 
     def extract_json(self, text: str) -> Optional[Dict[str, Any]]:
         text = text.strip()
@@ -114,30 +137,64 @@ class ContentGenerator:
 
     def generate(self, config: Config, recent_posts: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         if not self.gemini_key:
-            print("No Gemini API key configured")
+            print("❌ No Gemini API key configured")
             return None
 
         prompt = self.build_prompt(recent_posts)
 
-        max_retries = 6
-        for attempt in range(1, max_retries + 1):
-            print(f"\n Attempt {attempt}/{max_retries} with Gemini...")
-            result = self._generate_gemini(prompt)
-            
-            if result:
-                print(f"✅ Content generated with Gemini (attempt {attempt})")
-                return result
-            
-            if attempt < max_retries:
-                wait_time = 30
-                print(f"  Waiting {wait_time}s before retry...")
-                time.sleep(wait_time)
+        # ترتيب الموديلات: المفضل أولاً، ثم الباقي عشوائياً
+        available_models = [m for m in self.models if m not in self.failed_models]
+        
+        if not available_models:
+            print("❌ No available models!")
+            return None
+        
+        # ضع الموديل الحالي في البداية
+        ordered = [self.current_model] if self.current_model in available_models else []
+        others = [m for m in available_models if m != self.current_model]
+        random.shuffle(others)
+        ordered.extend(others)
 
-        print("\n❌ All attempts failed")
+        print(f"\n🎯 Models order: {ordered}")
+
+        # تجربة كل موديل
+        for model in ordered:
+            print(f"\n{'='*50}")
+            print(f"🎯 Trying model: {model}")
+            print(f"{'='*50}")
+            
+            max_retries = 2
+            for attempt in range(1, max_retries + 1):
+                print(f"  Attempt {attempt}/{max_retries}")
+                result, error_code = self._generate_gemini(prompt, model)
+                
+                if result:
+                    print(f"\n✅ SUCCESS with {model} (attempt {attempt})")
+                    self.current_model = model
+                    return result
+                
+                # إذا كان 404، تخطى هذا الموديل نهائياً
+                if error_code == 404:
+                    print(f"  ⛔ Model {model} NOT FOUND - skipping permanently")
+                    self.failed_models.add(model)
+                    break
+                
+                # إذا كان Rate Limit، انتقل للموديل التالي
+                if error_code == 429:
+                    print(f"  ⚠️ Rate limit on {model} - trying next model")
+                    break
+                
+                if attempt < max_retries:
+                    wait = 20
+                    print(f"  ⏳ Waiting {wait}s before retry...")
+                    time.sleep(wait)
+
+        print("\n❌ All models failed")
         return None
 
-    def _generate_gemini(self, prompt: str) -> Optional[Dict[str, Any]]:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
+    def _generate_gemini(self, prompt: str, model: str):
+        """توليد محتوى باستخدام موديل محدد. تُرجع (result, error_code)"""
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         headers = {"Content-Type": "application/json"}
         params = {"key": self.gemini_key}
         data = {
@@ -152,26 +209,34 @@ class ContentGenerator:
 
         try:
             response = requests.post(url, headers=headers, params=params, json=data, timeout=90)
-
+            
             if response.status_code == 429:
-                print("  Rate limit exceeded")
-                return None
+                print(f"  ⚠️ Rate limit exceeded")
+                return None, 429
+            elif response.status_code == 404:
+                print(f"  ❌ Model not found (404)")
+                return None, 404
             elif response.status_code == 503:
-                print("  Service unavailable (high demand)")
-                return None
+                print(f"  ⚠️ Service unavailable (503)")
+                return None, 503
             elif response.status_code != 200:
-                print(f"  API error: {response.status_code}")
-                print(f"  Response: {response.text[:200]}")
-                return None
+                print(f"   API error: {response.status_code}")
+                try:
+                    err = response.json()
+                    print(f"     Details: {err.get('error', {}).get('message', '')[:100]}")
+                except:
+                    pass
+                return None, response.status_code
 
             result = response.json()
             if "candidates" in result and len(result["candidates"]) > 0:
                 content_text = result["candidates"][0]["content"]["parts"][0]["text"]
-                return self.extract_json(content_text)
-            return None
+                return self.extract_json(content_text), 200
+            return None, 200
+            
         except Exception as e:
-            print(f"  Error: {e}")
-            return None
+            print(f"  ❌ Network error: {e}")
+            return None, 0
 
 
 def generate_content(config: Config, recent_posts: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
