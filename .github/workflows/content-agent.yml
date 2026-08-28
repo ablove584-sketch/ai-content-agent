@@ -93,7 +93,7 @@ jobs:
           content_type = os.getenv("CONTENT_TYPE", "random")
           workflow_id = os.getenv("WORKFLOW_ID", "unknown")
           
-          # قراءة المنشور من قاعدة البيانات (آخر منشور)
+          # قراءة المنشور من قاعدة البيانات
           db_path = 'data/content.db'
           title = "منشور جديد"
           content = "تم إنشاء محتوى جديد بنجاح"
@@ -109,7 +109,7 @@ jobs:
               conn.row_factory = sqlite3.Row
               cursor = conn.cursor()
               
-              # جلب آخر منشور (استخدم id بدلاً من created_at)
+              # جلب آخر منشور
               cursor.execute('''
                   SELECT title, content, topic, angle, core_idea, keywords, hashtags 
                   FROM posts 
@@ -124,8 +124,23 @@ jobs:
                   topic = row['topic'] or topic
                   angle = row['angle'] or angle
                   core_idea = row['core_idea'] or core_idea
-                  keywords = json.loads(row['keywords'] or '[]') if row['keywords'] else []
-                  hashtags = json.loads(row['hashtags'] or '[]') if row['hashtags'] else []
+                  
+                  # إصلاح: التحقق من النص الفارغ قبل json.loads
+                  if row['keywords'] and row['keywords'].strip():
+                      try:
+                          keywords = json.loads(row['keywords'])
+                      except:
+                          keywords = []
+                  else:
+                      keywords = []
+                  
+                  if row['hashtags'] and row['hashtags'].strip():
+                      try:
+                          hashtags = json.loads(row['hashtags'])
+                      except:
+                          hashtags = []
+                  else:
+                      hashtags = []
               
               conn.close()
           
