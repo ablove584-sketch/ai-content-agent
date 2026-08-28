@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Content Agent</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { color: #667eea; margin-bottom: 10px; text-align: center; }
+        .subtitle { color: #666; text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; }
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: translateY(-2px); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .loading { text-align: center; color: #667eea; }
+        .info {
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI Content Agent</h1>
+        <p class="subtitle">نظام نشر المحتوى التلقائي</p>
+        
+        <div class="info">
+            💡 املأ النموذج وسيتم إنشاء طلب نشر تلقائياً.
+            سيتم معالجة الطلب خلال دقائق.
+        </div>
+        
+        <form id="publishForm">
+            <div class="form-group">
+                <label for="contentType">نوع المحتوى:</label>
+                <select id="contentType" required>
+                    <option value="random">🎲 عشوائي</option>
+                    <option value="book_summary">📚 ملخص كتاب</option>
+                    <option value="article"> مقال</option>
+                    <option value="story">📖 قصة</option>
+                    <option value="facts">💡 حقائق</option>
+                    <option value="tips">🎯 نصائح</option>
+                    <option value="news">📰 خبر تقني</option>
+                    <option value="philosophy">🤔 فلسفة</option>
+                    <option value="history">️ تاريخ</option>
+                    <option value="science">🔬 علوم</option>
+                    <option value="psychology">🧠 علم نفس</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="bookGroup" style="display:none;">
+                <label for="bookName">اسم الكتاب:</label>
+                <input type="text" id="bookName" placeholder="مثال: العادات الذرية">
+            </div>
+            
+            <div class="form-group" id="topicGroup" style="display:none;">
+                <label for="customTopic">موضوع مخصص:</label>
+                <input type="text" id="customTopic" placeholder="أدخل الموضوع...">
+            </div>
+            
+            <button type="submit" id="submitBtn">🚀 نشر المحتوى</button>
+        </form>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const contentType = document.getElementById('contentType');
+        const bookGroup = document.getElementById('bookGroup');
+        const topicGroup = document.getElementById('topicGroup');
+        
+        contentType.addEventListener('change', function() {
+            bookGroup.style.display = this.value === 'book_summary' ? 'block' : 'none';
+            topicGroup.style.display = 
+                (this.value !== 'random' && this.value !== 'book_summary') ? 'block' : 'none';
+        });
+        
+        document.getElementById('publishForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const resultDiv = document.getElementById('result');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            submitBtn.disabled = true;
+            resultDiv.className = 'result loading';
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '⏳ جاري إرسال طلب النشر...';
+            
+            const data = {
+                content_type: contentType.value,
+                book_name: document.getElementById('bookName').value,
+                custom_topic: document.getElementById('customTopic').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                // إنشاء issue في GitHub (عام، لا يحتاج token)
+                const response = await fetch('https://api.github.com/repos/ablove584-sketch/ai-content-agent/issues', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: ` Publish Request: ${contentType.value}`,
+                        body: JSON.stringify(data, null, 2),
+                        labels: ['auto-publish']
+                    })
+                });
+                
+                if (response.status === 201) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        ✅ تم إرسال طلب النشر بنجاح!<br>
+                        <strong>النوع:</strong> ${contentType.value}<br>
+                        ${data.book_name ? `<strong>الكتاب:</strong> ${data.book_name}<br>` : ''}
+                        ${data.custom_topic ? `<strong>الموضوع:</strong> ${data.custom_topic}<br>` : ''}
+                        <br>سيتم المعالجة خلال دقائق.
+                    `;
+                    document.getElementById('publishForm').reset();
+                    bookGroup.style.display = 'none';
+                    topicGroup.style.display = 'none';
+                } else {
+                    const errorData = await response.json();
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `❌ فشل الإرسال: ${errorData.message || 'خطأ غير معروف'}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ خطأ في الاتصال: ${error.message}`;
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+name: Publish from Issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  publish:
+    if: contains(github.event.issue.labels.*.name, 'auto-publish')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Parse issue data
+        id: parse
+        run: |
+          echo "Parsing issue data..."
+          echo '${{ github.event.issue.body }}' > /tmp/issue_data.json
+          cat /tmp/issue_data.json
+
+      - name: Run Content Agent
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          GITHUB_TRIGGER_TOKEN: ${{ secrets.TRIGGER_TOKEN }}
+          CONTENT_TYPE: ${{ github.event.issue.title }}
+        run: |
+          echo "Processing publish request..."
+          python main.py
+
+      - name: Comment on issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ تم نشر المحتوى بنجاح! 🎉'
+            })
+
+      - name: Close issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.update({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed'
+            })
