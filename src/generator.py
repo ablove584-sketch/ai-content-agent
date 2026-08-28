@@ -4,66 +4,66 @@ import re
 import requests
 import time
 import random
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from src.config import Config
-
-# قائمة شاملة بجميع موديلات Gemini المعروفة
-ALL_GEMINI_MODELS = [
-    # الجيل الأحدث (2.5) - موصى به
-    "gemini-2.5-flash",
-    "gemini-2.5-pro",
-    "gemini-2.5-flash-lite",
-    
-    # الجيل الثاني (2.0)
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-lite",
-    "gemini-2.0-pro-exp",
-    
-    # الجيل الأول (1.5) - قد يكون متوقفاً
-    "gemini-1.5-pro",
-    "gemini-1.5-flash",
-    
-    # موديلات قديمة (غالباً متوقفة)
-    "gemini-1.0-pro",
-    "gemini-pro",
-]
-
-# موديلات سيتم تجاهلها نهائياً (معروفة بأنها متوقفة)
-KNOWN_DEPRECATED = {
-    "gemini-pro-vision",
-    "gemini-1.0-pro-vision",
-    "gemini-ultra",
-}
 
 class ContentGenerator:
     def __init__(self, config: Config):
         self.config = config
         self.gemini_key = config.GEMINI_API_KEY
+        self.available_models = []
+        self.current_model = None
         
-        # قراءة قائمة الموديلات من البيئة
-        models_env = os.getenv("GEMINI_MODELS", "")
-        if models_env:
-            self.models = [m.strip() for m in models_env.split(",") if m.strip()]
+        print("🔍 Discovering available Gemini models...")
+        self.available_models = self.discover_models()
+        
+        if self.available_models:
+            preferred = os.getenv("GEMINI_MODEL", "")
+            if preferred and preferred in self.available_models:
+                self.current_model = preferred
+            else:
+                self.current_model = self.available_models[0]
+            print(f"✅ Found {len(self.available_models)} models: {self.available_models}")
+            print(f"🎯 Using: {self.current_model}")
         else:
-            self.models = ALL_GEMINI_MODELS.copy()
-        
-        # إزالة الموديلات المتوقفة المعروفة
-        self.models = [m for m in self.models if m not in KNOWN_DEPRECATED]
-        
-        # النموذج المفضل للبدء
-        preferred = os.getenv("GEMINI_MODEL", "")
-        if preferred and preferred in self.models:
-            self.current_model = preferred
-        else:
-            self.current_model = self.models[0] if self.models else "gemini-2.5-flash"
-        
-        # قائمة الموديلات التي فشلت في هذه الجلسة
-        self.failed_models = set()
-        
-        print(f"🤖 Total models: {len(self.models)}")
-        print(f"📋 Models list: {self.models}")
-        print(f"🎯 Starting with: {self.current_model}")
-        print(f" Strategy: Auto-fallback on failure")
+            print("⚠️ No models discovered, using fallback list")
+            self.available_models = [
+                "gemini-2.5-flash",
+                "gemini-2.5-pro",
+                "gemini-2.0-flash",
+                "gemini-1.5-flash",
+                "gemini-1.5-pro",
+                "gemini-pro",
+            ]
+            self.current_model = self.available_models[0]
+
+    def discover_models(self) -> List[str]:
+        """استعلام عن الموديلات المتاحة فعلياً"""
+        try:
+            url = "https://generativelanguage.googleapis.com/v1beta/models"
+            params = {"key": self.gemini_key}
+            response = requests.get(url, params=params, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                models = []
+                for m in data.get("models", []):
+                    name = m.get("name", "")
+                    # فقط موديلات generateContent
+                    supported = m.get("supportedGenerationMethods", [])
+                    if "generateContent" in supported:
+                        # استخراج اسم الموديل فقط (بدون models/)
+                        model_name = name.replace("models/", "")
+                        # تجاهل الموديلات القديمة جداً
+                        if not any(skip in model_name for skip in ["embedding", "tuning", "corpus"]):
+                            models.append(model_name)
+                return models
+            else:
+                print(f"  ⚠️ Models API returned {response.status_code}")
+                return []
+        except Exception as e:
+            print(f"   Error discovering models: {e}")
+            return []
 
     def build_prompt(self, recent_posts: List[Dict[str, Any]]) -> str:
         memory = ""
@@ -142,22 +142,14 @@ class ContentGenerator:
 
         prompt = self.build_prompt(recent_posts)
 
-        # ترتيب الموديلات: المفضل أولاً، ثم الباقي عشوائياً
-        available_models = [m for m in self.models if m not in self.failed_models]
-        
-        if not available_models:
-            print("❌ No available models!")
-            return None
-        
-        # ضع الموديل الحالي في البداية
-        ordered = [self.current_model] if self.current_model in available_models else []
-        others = [m for m in available_models if m != self.current_model]
+        # ترتيب الموديلات
+        ordered = [self.current_model] if self.current_model else []
+        others = [m for m in self.available_models if m != self.current_model]
         random.shuffle(others)
         ordered.extend(others)
 
         print(f"\n🎯 Models order: {ordered}")
 
-        # تجربة كل موديل
         for model in ordered:
             print(f"\n{'='*50}")
             print(f"🎯 Trying model: {model}")
@@ -173,27 +165,23 @@ class ContentGenerator:
                     self.current_model = model
                     return result
                 
-                # إذا كان 404، تخطى هذا الموديل نهائياً
                 if error_code == 404:
-                    print(f"  ⛔ Model {model} NOT FOUND - skipping permanently")
-                    self.failed_models.add(model)
+                    print(f"  ⛔ Model {model} NOT FOUND - skipping")
+                    if model in self.available_models:
+                        self.available_models.remove(model)
                     break
                 
-                # إذا كان Rate Limit، انتقل للموديل التالي
                 if error_code == 429:
-                    print(f"  ⚠️ Rate limit on {model} - trying next model")
+                    print(f"  ⚠️ Rate limit - trying next model")
                     break
                 
                 if attempt < max_retries:
-                    wait = 20
-                    print(f"  ⏳ Waiting {wait}s before retry...")
-                    time.sleep(wait)
+                    time.sleep(20)
 
         print("\n❌ All models failed")
         return None
 
-    def _generate_gemini(self, prompt: str, model: str):
-        """توليد محتوى باستخدام موديل محدد. تُرجع (result, error_code)"""
+    def _generate_gemini(self, prompt: str, model: str) -> Tuple[Optional[Dict], int]:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         headers = {"Content-Type": "application/json"}
         params = {"key": self.gemini_key}
@@ -223,7 +211,8 @@ class ContentGenerator:
                 print(f"   API error: {response.status_code}")
                 try:
                     err = response.json()
-                    print(f"     Details: {err.get('error', {}).get('message', '')[:100]}")
+                    msg = err.get('error', {}).get('message', '')
+                    print(f"     {msg[:150]}")
                 except:
                     pass
                 return None, response.status_code
