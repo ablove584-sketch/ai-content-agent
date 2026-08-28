@@ -129,6 +129,9 @@
             from { opacity: 0; transform: translateY(-30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+.logo-container { display: flex; justify-content: center; margin-bottom: 15px; }
+.logo-img { max-width: 280px; height: auto; filter: drop-shadow(0 4px 12px rgba(102,126,234,0.3)); transition: transform 0.3s; }
+.logo-img:hover { transform: scale(1.05); }
         .logo {
             font-size: 56px;
             font-weight: 200;
@@ -601,6 +604,9 @@
         footer { text-align: center; padding: 30px 20px; color: var(--text-muted); font-size: 13px; margin-top: 40px; }
         
         @media (max-width: 768px) {
+.logo-container { display: flex; justify-content: center; margin-bottom: 15px; }
+.logo-img { max-width: 280px; height: auto; filter: drop-shadow(0 4px 12px rgba(102,126,234,0.3)); transition: transform 0.3s; }
+.logo-img:hover { transform: scale(1.05); }
             .logo { font-size: 40px; letter-spacing: 6px; }
             .hero h2 { font-size: 24px; }
             .post-title { font-size: 18px; }
@@ -633,7 +639,7 @@
     
     <div class="container">
         <header>
-            <div class="logo">alkinani</div>
+            <div class="logo-container"><img src="logo.png" alt="alkinani" class="logo-img"></div>
             <p class="subtitle">مركز المحتوى المُولّد والمنشور تلقائيًا بالذكاء الاصطناعي</p>
             <button class="icon-btn" onclick="toggleTheme()" title="الوضع الداكن" id="themeBtn"></button>
         </header>
