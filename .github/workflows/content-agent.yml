@@ -96,7 +96,7 @@ jobs:
           # قراءة المنشور من قاعدة البيانات (آخر منشور)
           db_path = 'data/content.db'
           title = "منشور جديد"
-          content = "تم إنشاء محتوى جديد"
+          content = "تم إنشاء محتوى جديد بنجاح"
           topic = ""
           angle = ""
           core_idea = ""
@@ -109,11 +109,11 @@ jobs:
               conn.row_factory = sqlite3.Row
               cursor = conn.cursor()
               
-              # جلب آخر منشور
+              # جلب آخر منشور (استخدم id بدلاً من created_at)
               cursor.execute('''
                   SELECT title, content, topic, angle, core_idea, keywords, hashtags 
                   FROM posts 
-                  ORDER BY created_at DESC 
+                  ORDER BY id DESC 
                   LIMIT 1
               ''')
               
