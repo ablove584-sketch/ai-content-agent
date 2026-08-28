@@ -2,6 +2,9 @@
 <html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="alkinani - منصة محتوى متنوعة تُولَّد وتُنشَر تلقائيًا بالذكاء الاصطناعي: مقالات، ملخصات كتب، قصص، فلسفة، علوم">
     <meta name="keywords" content="محتوى, ذكاء اصطناعي, مقالات, قصص, ملخصات كتب, فلسفة, علوم, Gemini, alkinani">
@@ -771,17 +774,17 @@
         
         // صور Unsplash حسب النوع
         const TYPE_IMAGES = {
-            'random': 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800',
-            'book_summary': 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800',
-            'article': 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800',
-            'story': 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800',
-            'facts': 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800',
-            'tips': 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?w=800',
-            'news': 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800',
-            'philosophy': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800',
-            'history': 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800',
-            'science': 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800',
-            'psychology': 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800'
+            'random': 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=70&auto=format',
+            'book_summary': 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&q=70&auto=format',
+            'article': 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&q=70&auto=format',
+            'story': 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&q=70&auto=format',
+            'facts': 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&q=70&auto=format',
+            'tips': 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?w=600&q=70&auto=format',
+            'news': 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=70&auto=format',
+            'philosophy': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=70&auto=format',
+            'history': 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=600&q=70&auto=format',
+            'science': 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&q=70&auto=format',
+            'psychology': 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=70&auto=format'
         };
         
         let allPosts = [];
@@ -854,11 +857,34 @@
         
         // Load Posts
         async function loadPosts() {
+            // عرض فوري من الكاش
+            if (!window._cacheRendered) {
+                window._cacheRendered = true;
+                try {
+                    const c = localStorage.getItem('postsCache');
+                    if (c && allPosts.length === 0) {
+                        allPosts = JSON.parse(c);
+                        setTimeout(() => {
+                            try {
+                                if (typeof updateStats === 'function') updateStats();
+                                if (typeof buildCategoriesBar === 'function') buildCategoriesBar();
+                                if (typeof buildCategoryStats === 'function') buildCategoryStats();
+                                if (typeof buildFilters === 'function') buildFilters();
+                                if (typeof updateWidgets === 'function') updateWidgets();
+                                displayedCount = 0;
+                                displayPosts(true);
+                            } catch (e) {}
+                        }, 30);
+                    }
+                } catch (e) {}
+            }
+
             const container = document.getElementById('postsContainer');
             try {
                 const response = await fetch('posts.json?t=' + Date.now());
                 if (!response.ok) throw new Error('فشل التحميل');
                 allPosts = await response.json();
+                try { localStorage.setItem("postsCache", JSON.stringify(allPosts)); } catch (e) {}
                 updateStats();
                 buildCategoryStats();
                 buildFilters();
@@ -1258,7 +1284,25 @@
             if (typeof _oldSel === 'function') _oldSel(type);
             else { displayedCount = 0; displayPosts(true); }
         };
-        setInterval(buildCategoriesBar, 5000);
+        setInterval(buildCategoriesBar, 60000);
+    
+        // ========== LAZY LOAD LIBRARIES ==========
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                if (document.querySelector('script[src="' + src + '"]')) return resolve();
+                const s = document.createElement('script');
+                s.src = src; s.onload = resolve; s.onerror = reject;
+                document.body.appendChild(s);
+            });
+        }
+        async function ensurePDF() {
+            if (typeof html2pdf === 'undefined')
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+        }
+        async function ensureQR() {
+            if (typeof QRCode === 'undefined')
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js');
+        }
     </script>
 </body>
 </html>
