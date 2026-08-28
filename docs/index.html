@@ -1,1440 +1,261 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <link rel="preconnect" href="https://images.unsplash.com">
-    <link rel="dns-prefetch" href="https://images.unsplash.com">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="alkinani - منصة محتوى متنوعة تُولَّد وتُنشَر تلقائيًا بالذكاء الاصطناعي: مقالات، ملخصات كتب، قصص، فلسفة، علوم">
-    <meta name="keywords" content="محتوى, ذكاء اصطناعي, مقالات, قصص, ملخصات كتب, فلسفة, علوم, Gemini, alkinani">
-    <meta name="author" content="alkinani">
-    <meta name="theme-color" content="#667eea">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="alkinani - مركز المحتوى الذكي">
-    <meta property="og:description" content="منصة محتوى متنوعة تُولَّد بالذكاء الاصطناعي">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://ablove584-sketch.github.io/ai-content-agent/">
-    <meta property="og:image" content="https://source.unsplash.com/1200x630/?technology,ai">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="alkinani">
-    <meta name="twitter:description" content="منصة محتوى ذكية بالذكاء الاصطناعي">
-    
-    <title>alkinani | مركز المحتوى الذكي</title>
-    
-    <!-- Schema.org -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "alkinani",
-        "description": "مركز المحتوى المُولّد والمنشور تلقائيًا بالذكاء الاصطناعي",
-        "url": "https://ablove584-sketch.github.io/ai-content-agent/",
-        "publisher": {
-            "@type": "Organization",
-            "name": "alkinani"
-        }
-    }
-    </script>
-    
-    <style>
-        :root {
-            --primary: #667eea;
-            --primary-dark: #5a67d8;
-            --secondary: #764ba2;
-            --accent: #f093fb;
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --bg-color: #f5f7fa;
-            --card-bg: #ffffff;
-            --text-primary: #1a202c;
-            --text-secondary: #4a5568;
-            --text-muted: #718096;
-            --border-color: #e2e8f0;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
-            --shadow-lg: 0 20px 50px rgba(0,0,0,0.12);
-            --radius-sm: 8px;
-            --radius-md: 14px;
-            --radius-lg: 20px;
-            --font-size-base: 16px;
-            --font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        [data-theme="dark"] {
-            --bg-color: #0f0f1e;
-            --card-bg: #1a1a2e;
-            --text-primary: #e2e8f0;
-            --text-secondary: #a0aec0;
-            --text-muted: #718096;
-            --border-color: #2d3748;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
-            --shadow-lg: 0 20px 50px rgba(0,0,0,0.5);
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: var(--font-family);
-            font-size: var(--font-size-base);
-            background: var(--bg-color);
-            color: var(--text-primary);
-            line-height: 1.7;
-            transition: var(--transition);
-            overflow-x: hidden;
-        }
-        
-        /* Progress Bar */
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 0%;
-            height: 3px;
-            background: var(--bg-gradient);
-            z-index: 9999;
-            transition: width 0.1s;
-        }
-        
-        /* Top Bar */
-        .top-bar {
-            background: var(--bg-gradient);
-            color: white;
-            padding: 8px 20px;
-            text-align: center;
-            font-size: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .top-bar-item { display: flex; align-items: center; gap: 5px; opacity: 0.95; }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        
-        /* Header */
-        header {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: 50px 30px;
-            margin: 20px 0;
-            box-shadow: var(--shadow-md);
-            text-align: center;
-            animation: slideDown 0.6s ease;
-        }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-.logo-container { display: flex; justify-content: center; margin-bottom: 15px; }
-.logo-img { max-width: 280px; height: auto; filter: drop-shadow(0 4px 12px rgba(102,126,234,0.3)); transition: transform 0.3s; }
-.logo-img:hover { transform: scale(1.05); }
-        .logo {
-            font-size: 56px;
-            font-weight: 200;
-            letter-spacing: 10px;
-            background: var(--bg-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-            font-family: 'Courier New', monospace;
-            text-transform: lowercase;
-        }
-        .subtitle { color: var(--text-secondary); font-size: 16px; line-height: 1.8; max-width: 600px; margin: 0 auto 25px; }
-        
-        .icon-btn {
-            background: var(--bg-color);
-            border: 2px solid var(--border-color);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            transition: var(--transition);
-            color: var(--text-primary);
-        }
-        .icon-btn:hover { transform: translateY(-3px); border-color: var(--primary); color: var(--primary); }
-        
-        /* Hero */
-        .hero {
-            background: var(--bg-gradient);
-            border-radius: var(--radius-lg);
-            padding: 50px 30px;
-            margin: 20px 0;
-            color: white;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%; right: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 4s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-        .hero-content { position: relative; z-index: 2; }
-        .hero h2 { font-size: 32px; margin-bottom: 15px; font-weight: 700; }
-        .hero p { font-size: 16px; opacity: 0.95; max-width: 600px; margin: 0 auto 25px; }
-        .hero-btn {
-            background: white; color: var(--primary);
-            padding: 12px 30px; border: none; border-radius: 30px;
-            font-size: 15px; font-weight: 600; cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-        .hero-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        
-        /* Category Bar */
-        .category-bar {
-            background: var(--card-bg);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: var(--shadow-sm);
-        }
-        .category-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 12px;
-        }
-        .category-item {
-            background: var(--bg-color);
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 15px 10px;
-            text-align: center;
-            transition: var(--transition);
-            cursor: pointer;
-        }
-        .category-item:hover, .category-item.active {
-            background: var(--bg-gradient);
-            color: white;
-            transform: translateY(-3px);
-            border-color: transparent;
-        }
-        .category-icon { font-size: 22px; margin-bottom: 5px; }
-        .category-count { font-size: 22px; font-weight: bold; }
-        .category-label { font-size: 11px; opacity: 0.85; margin-top: 3px; }
-        
-        /* Controls */
-        .controls {
-            background: var(--card-bg);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: var(--shadow-sm);
-        }
-        .search-box {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            font-size: 15px;
-            background: var(--bg-color);
-            color: var(--text-primary);
-            transition: var(--transition);
-        }
-        .search-box:focus { outline: none; border-color: var(--primary); }
-        .controls-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .font-controls { display: flex; gap: 8px; align-items: center; }
-        .font-btn {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            color: var(--text-primary);
-            transition: var(--transition);
-        }
-        .font-btn:hover, .font-btn.active { background: var(--primary); color: white; }
-        
-        /* Layout */
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 20px;
-            margin: 20px 0;
-        }
-        @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
-        
-        /* Posts */
-        .posts-container { display: flex; flex-direction: column; gap: 20px; }
-        
-        .post-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            animation: fadeIn 0.5s ease;
-            border-right: 4px solid transparent;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .post-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-            border-right-color: var(--primary);
-        }
-        
-        /* Post Image */
-        .post-image {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            display: block;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-        }
-        
-        .post-body { padding: 25px; }
-        
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .post-type {
-            background: var(--bg-gradient);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .post-meta { color: var(--text-muted); font-size: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
-        .post-title {
-            color: var(--text-primary);
-            font-size: 22px;
-            margin-bottom: 12px;
-            line-height: 1.4;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .post-title:hover { color: var(--primary); }
-        
-        .post-content {
-            color: var(--text-secondary);
-            line-height: 1.8;
-            font-size: 15px;
-            margin-bottom: 15px;
-        }
-        .post-content.expanded { max-height: none; }
-        .post-content.collapsed { max-height: 300px; overflow: hidden; position: relative; }
-        .post-content.collapsed::after {
-            content: '';
-            position: absolute;
-            bottom: 0; right: 0; left: 0;
-            height: 60px;
-            background: linear-gradient(transparent, var(--card-bg));
-        }
-        
-        .read-more-btn {
-            background: none;
-            border: none;
-            color: var(--primary);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            padding: 5px 0;
-            margin-bottom: 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .read-more-btn:hover { color: var(--secondary); }
-        
-        .post-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding-top: 15px;
-            border-top: 1px solid var(--border-color);
-        }
-        .rating { display: flex; gap: 3px; }
-        .star { cursor: pointer; font-size: 18px; color: var(--border-color); transition: var(--transition); }
-        .star.active, .star:hover { color: #fbbf24; }
-        .post-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .action-btn {
-            padding: 7px 14px;
-            background: var(--bg-color);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .action-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
-        
-        /* Hashtags */
-        .hashtags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-        .hashtag {
-            background: var(--bg-color);
-            color: var(--primary);
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            border: 1px solid var(--border-color);
-        }
-        
-        /* Sidebar */
-        .sidebar { display: flex; flex-direction: column; gap: 20px; }
-        .widget {
-            background: var(--card-bg);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            box-shadow: var(--shadow-sm);
-        }
-        .widget-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--border-color);
-            color: var(--text-primary);
-        }
-        .widget-list { list-style: none; }
-        .widget-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        .widget-list li:last-child { border-bottom: none; }
-        .widget-list li:hover { color: var(--primary); padding-right: 8px; }
-        .newsletter-form input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            margin-bottom: 10px;
-            background: var(--bg-color);
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-        .newsletter-form button {
-            width: 100%;
-            padding: 10px;
-            background: var(--bg-gradient);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-        .newsletter-form button:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-        
-        /* Floating Share */
-        .floating-share {
-            position: fixed;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 100;
-        }
-        @media (max-width: 1200px) { .floating-share { display: none; } }
-        .share-fab {
-            width: 45px; height: 45px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            color: white;
-            transition: var(--transition);
-            box-shadow: var(--shadow-md);
-        }
-        .share-fab:hover { transform: scale(1.15); }
-        .share-wa { background: #25D366; }
-        .share-tw { background: #1DA1F2; }
-        .share-fb { background: #1877F2; }
-        .share-top { background: var(--primary); }
-        
-        /* Modal (Details Page) */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 10000;
-            overflow-y: auto;
-            padding: 20px;
-            animation: fadeIn 0.3s;
-        }
-        .modal-overlay.active { display: block; }
-        .modal {
-            background: var(--card-bg);
-            max-width: 800px;
-            margin: 40px auto;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            animation: slideDown 0.4s;
-        }
-        .modal-image {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-        }
-        .modal-content { padding: 30px; }
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            box-shadow: var(--shadow-md);
-            z-index: 10001;
-        }
-        .modal-title { font-size: 28px; margin-bottom: 15px; color: var(--text-primary); }
-        .modal-meta { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; }
-        .modal-body { color: var(--text-secondary); line-height: 2; font-size: 16px; white-space: pre-wrap; }
-        
-        /* Comments */
-        .comments-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid var(--border-color);
-        }
-        .comments-title { font-size: 20px; margin-bottom: 15px; color: var(--text-primary); }
-        .comment-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .comment-form input, .comment-form textarea {
-            padding: 10px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-color);
-            color: var(--text-primary);
-            font-family: inherit;
-            font-size: 14px;
-        }
-        .comment-form textarea { min-height: 80px; resize: vertical; }
-        .comment-form button {
-            align-self: flex-start;
-            padding: 10px 20px;
-            background: var(--bg-gradient);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .comment-item {
-            background: var(--bg-color);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .comment-author { font-weight: 600; color: var(--primary); margin-bottom: 5px; }
-        .comment-date { font-size: 11px; color: var(--text-muted); }
-        .comment-text { color: var(--text-secondary); margin-top: 5px; }
-        
-        /* Views Counter */
-        .views-counter {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: var(--bg-color);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        
-        /* Loading */
-        .loading, .empty, .error {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: var(--radius-md);
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-            color: var(--text-primary);
-        }
-        .loading { color: var(--primary); }
-        .error { background: #fed7d7; color: #c53030; }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid var(--border-color);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        footer { text-align: center; padding: 30px 20px; color: var(--text-muted); font-size: 13px; margin-top: 40px; }
-        
-        @media (max-width: 768px) {
-.logo-container { display: flex; justify-content: center; margin-bottom: 15px; }
-.logo-img { max-width: 280px; height: auto; filter: drop-shadow(0 4px 12px rgba(102,126,234,0.3)); transition: transform 0.3s; }
-.logo-img:hover { transform: scale(1.05); }
-            .logo { font-size: 40px; letter-spacing: 6px; }
-            .hero h2 { font-size: 24px; }
-            .post-title { font-size: 18px; }
-            .modal-title { font-size: 22px; }
-            .container { padding: 10px; }
-            header { padding: 30px 20px; }
-        }
-        
-        .font-small { --font-size-base: 14px; }
-        .font-medium { --font-size-base: 16px; }
-        .font-large { --font-size-base: 18px; }
-        .font-xlarge { --font-size-base: 20px; }
-    
-        .categories-wrapper { position: relative; margin: 20px 0; background: var(--card-bg, white); border-radius: 15px; padding: 15px 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
-        .categories-bar { display: flex; gap: 10px; overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none; padding: 5px 0; }
-        .categories-bar::-webkit-scrollbar { display: none; }
-        .category-chip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--bg-color, #f5f7fa); border: 2px solid var(--border-color, #e2e8f0); border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary, #4a5568); transition: all 0.3s; white-space: nowrap; }
-        .category-chip:hover { border-color: #667eea; color: #667eea; transform: translateY(-2px); }
-        .category-chip.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-color: transparent; }
-        .chip-count { background: rgba(128,128,128,0.2); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
-        .category-chip.active .chip-count { background: rgba(255,255,255,0.25); }
-        .scroll-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 35px; height: 35px; border-radius: 50%; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; cursor: pointer; z-index: 10; }
-        .scroll-right { right: 8px; } .scroll-left { left: 8px; }
-    
-        /* ========== INSTAGRAM STYLE ========== */
-        .insta-card { background: var(--card-bg, #fff); border-radius: 14px; box-shadow: 0 3px 15px rgba(0,0,0,0.08); overflow: hidden; animation: fadeIn .5s ease; max-width: 520px; margin: 0 auto; width: 100%; }
-        .insta-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
-        .insta-avatar-ring { width: 44px; height: 44px; border-radius: 50%; padding: 3px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); flex-shrink: 0; }
-        .insta-avatar { width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--card-bg, #fff); display: flex; align-items: center; justify-content: center; font-size: 18px; background: linear-gradient(135deg, #667eea, #764ba2); }
-        .insta-user { flex: 1; text-align: right; }
-        .insta-username { font-weight: 700; font-size: 14px; color: var(--text-primary, #333); }
-        .insta-location { font-size: 12px; color: var(--text-muted, #999); }
-        .insta-menu { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-primary, #333); }
-        .insta-image { position: relative; width: 100%; aspect-ratio: 1/1; background: #000; cursor: pointer; overflow: hidden; }
-        .insta-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .insta-heart-burst { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0); font-size: 90px; opacity: 0; pointer-events: none; text-shadow: 0 5px 20px rgba(0,0,0,.4); }
-        .insta-heart-burst.show { animation: heartBurst .8s ease; }
-        @keyframes heartBurst { 0% {transform:translate(-50%,-50%) scale(0);opacity:0;} 15% {transform:translate(-50%,-50%) scale(1.2);opacity:1;} 30% {transform:translate(-50%,-50%) scale(1);} 70% {transform:translate(-50%,-50%) scale(1);opacity:1;} 100% {transform:translate(-50%,-50%) scale(0);opacity:0;} }
-        .insta-actions { display: flex; align-items: center; gap: 14px; padding: 10px 14px 4px; }
-        .insta-actions button { background: none; border: none; font-size: 24px; cursor: pointer; transition: transform .2s; padding: 0; }
-        .insta-actions button:hover { transform: scale(1.15); }
-        .insta-save { margin-inline-start: auto; }
-        .insta-likes { padding: 0 14px; font-size: 14px; color: var(--text-primary, #333); }
-        .insta-caption { padding: 6px 14px; font-size: 14px; color: var(--text-secondary, #555); line-height: 1.6; }
-        .insta-title { font-weight: 700; color: var(--text-primary, #333); display: block; margin: 4px 0; font-size: 15px; }
-        .insta-more { background: none; border: none; color: var(--text-muted, #999); cursor: pointer; font-size: 13px; padding: 0; }
-        .insta-hashtags { color: #3897f0; font-size: 13px; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 6px; }
-        .insta-comments-link { padding: 4px 14px; font-size: 13px; color: var(--text-muted, #999); cursor: pointer; }
-        .insta-time { padding: 0 14px 10px; font-size: 11px; color: var(--text-muted, #999); }
-        .insta-add-comment { display: flex; gap: 8px; border-top: 1px solid var(--border-color, #e2e8f0); padding: 10px 14px; }
-        .insta-add-comment input { flex: 1; border: none; background: transparent; color: var(--text-primary, #333); font-size: 14px; outline: none; }
-        .insta-add-comment button { background: none; border: none; color: #3897f0; font-weight: 700; cursor: pointer; font-size: 14px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="alkinani - مركز المحتوى المولد بالذكاء الاصطناعي">
+<link rel="preconnect" href="https://images.unsplash.com">
+<title>alkinani | مركز المحتوى الذكي</title>
+<style>
+:root{--primary:#667eea;--secondary:#764ba2;--grad:linear-gradient(135deg,#667eea,#764ba2);--bg:#f0f2f8;--card:#fff;--text:#1a202c;--muted:#718096;--border:#e2e8f0;--shadow:0 3px 15px rgba(0,0,0,.08)}
+[data-theme=dark]{--bg:#0f0f1e;--card:#1a1a2e;--text:#e2e8f0;--muted:#a0aec0;--border:#2d3748;--shadow:0 3px 15px rgba(0,0,0,.4)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;transition:background .3s,color .3s}
+.container{max-width:1100px;margin:0 auto;padding:15px}
+.topbar{background:var(--grad);color:#fff;padding:8px 15px;text-align:center;font-size:12px;display:flex;justify-content:center;gap:15px;flex-wrap:wrap}
+header{background:var(--card);border-radius:20px;padding:40px 20px;margin:15px 0;text-align:center;box-shadow:var(--shadow)}
+.logo{font-size:44px;letter-spacing:8px;font-family:'Courier New',monospace;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:var(--muted);margin-top:10px}
+.theme-btn{margin-top:15px;background:var(--bg);border:1px solid var(--border);width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:18px}
+.hero{display:none;background:var(--grad);border-radius:20px;padding:40px 20px;margin:15px 0;color:#fff;text-align:center;position:relative}
+.hero h2{font-size:26px;margin-bottom:10px}
+.hero p{opacity:.95;margin-bottom:15px}
+.hero a{display:inline-block;background:#fff;color:var(--primary);padding:10px 25px;border-radius:25px;text-decoration:none;font-weight:700}
+.cats-wrap{position:relative;background:var(--card);border-radius:15px;padding:12px 45px;margin:15px 0;box-shadow:var(--shadow)}
+.cats{display:flex;gap:10px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:var(--bg);border:2px solid var(--border);border-radius:25px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text);white-space:nowrap}
+.chip.active{background:var(--grad);color:#fff;border-color:transparent}
+.chip .cnt{background:rgba(128,128,128,.2);padding:1px 8px;border-radius:10px;font-size:11px}
+.chip.active .cnt{background:rgba(255,255,255,.25)}
+.sbtn{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:none;background:var(--grad);color:#fff;cursor:pointer;z-index:5}
+.sbtn.r{right:6px}.sbtn.l{left:6px}
+.controls{background:var(--card);border-radius:15px;padding:15px;margin:15px 0;box-shadow:var(--shadow)}
+.search{width:100%;padding:12px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-size:15px}
+.crow{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:10px}
+.fbtn{background:var(--bg);border:1px solid var(--border);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text)}
+.layout{display:grid;grid-template-columns:1fr 300px;gap:15px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.posts{display:flex;flex-direction:column;gap:15px}
+.insta-card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;max-width:520px;margin:0 auto;width:100%}
+.i-head{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.i-ring{width:44px;height:44px;border-radius:50%;padding:3px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);flex-shrink:0}
+.i-av{width:100%;height:100%;border-radius:50%;border:2px solid var(--card);display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--grad)}
+.i-user{flex:1}
+.i-name{font-weight:700;font-size:14px}
+.i-loc{font-size:12px;color:var(--muted)}
+.i-img{position:relative;width:100%;aspect-ratio:1/1;background:#000;cursor:pointer}
+.i-img img{width:100%;height:100%;object-fit:cover;display:block}
+.i-burst{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);font-size:90px;opacity:0;pointer-events:none}
+.i-burst.show{animation:hb .8s ease}
+@keyframes hb{0%{transform:translate(-50%,-50%) scale(0);opacity:0}15%{transform:translate(-50%,-50%) scale(1.2);opacity:1}30%{transform:translate(-50%,-50%) scale(1)}70%{opacity:1}100%{transform:translate(-50%,-50%) scale(0);opacity:0}}
+.i-actions{display:flex;align-items:center;gap:14px;padding:10px 14px 4px}
+.i-actions button{background:none;border:none;font-size:24px;cursor:pointer;padding:0}
+.i-save{margin-inline-start:auto}
+.i-likes{padding:0 14px;font-size:14px}
+.i-cap{padding:6px 14px;font-size:14px;color:var(--muted)}
+.i-title{font-weight:700;color:var(--text);display:block;margin:4px 0;font-size:15px}
+.i-more{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0}
+.i-tags{color:#3897f0;font-size:13px;margin-top:4px;display:flex;flex-wrap:wrap;gap:6px}
+.i-clink{padding:4px 14px;font-size:13px;color:var(--muted);cursor:pointer}
+.i-time{padding:0 14px 10px;font-size:11px;color:var(--muted)}
+.i-add{display:flex;gap:8px;border-top:1px solid var(--border);padding:10px 14px}
+.i-add input{flex:1;border:none;background:transparent;color:var(--text);font-size:14px;outline:none}
+.i-add button{background:none;border:none;color:#3897f0;font-weight:700;cursor:pointer}
+.side{display:flex;flex-direction:column;gap:15px}
+.widget{background:var(--card);border-radius:15px;padding:18px;box-shadow:var(--shadow)}
+.wtitle{font-size:15px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+.wlist{list-style:none}
+.wlist li{padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;font-size:13px;color:var(--muted)}
+.wlist li:last-child{border-bottom:none}
+.wlist li:hover{color:var(--primary)}
+.nform input{width:100%;padding:10px;border:2px solid var(--border);border-radius:8px;margin-bottom:10px;background:var(--bg);color:var(--text)}
+.nform button{width:100%;padding:10px;background:var(--grad);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+.loading,.empty{background:var(--card);padding:40px;border-radius:15px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}
+.spinner{width:40px;height:40px;border:4px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 15px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;overflow-y:auto;padding:15px}
+.modal.open{display:block}
+.m-box{background:var(--card);max-width:750px;margin:30px auto;border-radius:20px;overflow:hidden;position:relative}
+.m-close{position:absolute;top:15px;left:15px;background:#fff;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:18px;z-index:10}
+.m-img{width:100%;height:260px;object-fit:cover}
+.m-body{padding:25px}
+.m-title{font-size:24px;margin:10px 0}
+.m-meta{color:var(--muted);font-size:13px;margin-bottom:15px;display:flex;gap:12px;flex-wrap:wrap}
+.m-text{line-height:2;white-space:pre-wrap;color:var(--text)}
+.m-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;padding-top:15px;border-top:1px solid var(--border)}
+.abtn{padding:8px 14px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px}
+.cform{display:flex;flex-direction:column;gap:10px;margin:15px 0}
+.cform input,.cform textarea{padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit}
+.cform button{align-self:flex-start;padding:10px 20px;background:var(--grad);color:#fff;border:none;border-radius:8px;cursor:pointer}
+.citem{background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px}
+.cname{font-weight:700;color:var(--primary);font-size:13px}
+.cdate{font-size:11px;color:var(--muted)}
+.ctext{font-size:14px;margin-top:4px}
+.toasts{position:fixed;top:15px;left:15px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--card);color:var(--text);padding:12px 18px;border-radius:10px;box-shadow:var(--shadow);border-right:4px solid var(--primary);font-size:14px}
+footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
+</style>
 </head>
 <body>
-    <div class="progress-bar" id="progressBar"></div>
-    
-    <div class="top-bar">
-        <div class="top-bar-item"><span></span><time id="liveTime">--:--:--</time></div>
-        <div class="top-bar-item"><span>📅</span><time id="liveDate">----/--/--</time></div>
-        <div class="top-bar-item"><span>↻</span><span>آخر تحديث: <strong id="lastUpdate">-</strong></span></div>
-    </div>
-    
-    <div class="floating-share">
-        <button class="share-fab share-wa" onclick="shareTo('whatsapp')" title="واتساب">📱</button>
-        <button class="share-fab share-tw" onclick="shareTo('twitter')" title="تويتر">🐦</button>
-        <button class="share-fab share-fb" onclick="shareTo('facebook')" title="فيسبوك">📘</button>
-        <button class="share-fab share-top" onclick="scrollToTop()" title="للأعلى">⬆️</button>
-    </div>
-    
-    <div class="container">
-        <header>
-            <div class="logo">alkinani</div>
-            <p class="subtitle">مركز المحتوى المُولّد والمنشور تلقائيًا بالذكاء الاصطناعي</p>
-            <button class="icon-btn" onclick="toggleTheme()" title="الوضع الداكن" id="themeBtn"></button>
-        </header>
-        
-        <section class="hero">
-            <div class="hero-content">
-                <h2>✨ اكتشف عالماً من المحتوى الذكي</h2>
-                <p>مقالات • ملخصات كتب • قصص • حقائق • نصائح • فلسفة • علوم • والمزيد</p>
-                <button class="hero-btn" onclick="scrollToPosts()"> استكشف المنشورات</button>
-            </div>
-        </section>
-        <div class="categories-wrapper">
-            <button class="scroll-btn scroll-right" onclick="scrollCategories(1)">❯</button>
-            <div class="categories-bar" id="categoriesBar"></div>
-            <button class="scroll-btn scroll-left" onclick="scrollCategories(-1)">❮</button>
-        </div>
-
-        
-        
-        
-        <div class="controls">
-            <input type="text" class="search-box" id="searchBox" placeholder="🔍 ابحث في المنشورات...">
-            <div class="controls-row">
-                <div class="filters" id="filtersContainer">
-                    <button class="font-btn active" data-type="all" onclick="selectCategory('all')">الكل</button>
-                </div>
-                <div class="font-controls">
-                    <span style="font-size:12px;color:var(--text-muted)">حجم الخط:</span>
-                    <button class="font-btn" onclick="setFontSize('small')">A-</button>
-                    <button class="font-btn" onclick="setFontSize('medium')">A</button>
-                    <button class="font-btn" onclick="setFontSize('large')">A+</button>
-                    <button class="font-btn" onclick="setFontSize('xlarge')">A++</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="main-layout">
-            <main class="posts-container" id="postsContainer">
-                <div class="loading"><div class="spinner"></div><p>جاري تحميل المنشورات...</p></div>
-            </main>
-            
-            <aside class="sidebar">
-                <div class="widget">
-                    <h3 class="widget-title">🔥 الأكثر قراءة</h3>
-                    <ul class="widget-list" id="mostReadList"><li>جاري التحميل...</li></ul>
-                </div>
-                <div class="widget">
-                    <h3 class="widget-title">💬 آخر التعليقات</h3>
-                    <ul class="widget-list" id="commentsList"><li>كن أول من يعلّق!</li></ul>
-                </div>
-                <div class="widget">
-                    <h3 class="widget-title">📧 النشرة البريدية</h3>
-                    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;">اشترك لتصلك أحدث المنشورات</p>
-                    <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
-                        <input type="email" placeholder="بريدك الإلكتروني" required>
-                        <button type="submit">اشترك الآن</button>
-                    </form>
-                </div>
-                <div class="widget">
-                    <h3 class="widget-title">📊 إحصائيات</h3>
-                    <ul class="widget-list">
-                        <li>📚 إجمالي المنشورات: <strong id="statTotal">0</strong></li>
-                        <li>️ أنواع المحتوى: <strong id="statTypes">0</strong></li>
-                        <li>️ إجمالي المشاهدات: <strong id="statViews">0</strong></li>
-                        <li>⏱️ آخر تحديث: <strong id="statLast">-</strong></li>
-                    </ul>
-                </div>
-            </aside>
-        </div>
-        
-        <footer>
-            <p style="margin-top:8px;">© 2026 alkinani - جميع الحقوق محفوظة</p>
-        </footer>
-    </div>
-    
-    <!-- Modal for Post Details -->
-    <div class="modal-overlay" id="postModal">
-        <button class="modal-close" onclick="closeModal()">✕</button>
-        <div class="modal">
-            <img class="modal-image" id="modalImage" src="" alt="">
-            <div class="modal-content">
-                <span class="post-type" id="modalType"></span>
-                <h1 class="modal-title" id="modalTitle"></h1>
-                <div class="modal-meta">
-                    <span id="modalDate"></span>
-                    <span id="modalReadingTime"></span>
-                    <span class="views-counter">👁️ <span id="modalViews">0</span> مشاهدة</span>
-                </div>
-                <div class="modal-body" id="modalBody"></div>
-                <div class="hashtags" id="modalHashtags"></div>
-                
-                <div class="comments-section">
-                    <h3 class="comments-title">💬 التعليقات (<span id="commentsCount">0</span>)</h3>
-                    <form class="comment-form" onsubmit="submitComment(event)">
-                        <input type="text" id="commentName" placeholder="اسمك" required>
-                        <textarea id="commentText" placeholder="اكتب تعليقك..." required></textarea>
-                        <button type="submit">إرسال التعليق</button>
-                    </form>
-                    <div id="commentsContainer"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // ========== NULL SAFETY (منع أخطاء العناصر المفقودة) ==========
-        (function() {
-            const orig = document.getElementById.bind(document);
-            document.getElementById = function(id) {
-                const el = orig(id);
-                if (el) return el;
-                // عنصر مفقود؟ نرجعن عنصر وهمي لمنع توقف الكود
-                return document.createElement('div');
-            };
-        })();
-
-        const TYPE_LABELS = {
-            'random': ' عشوائي', 'book_summary': ' ملخص كتاب', 'article': '📝 مقال',
-            'story': '📖 قصة', 'facts': '💡 حقائق', 'tips': '🎯 نصائح',
-            'news': '📰 خبر تقني', 'philosophy': '🤔 فلسفة', 'history': '🏛️ تاريخ',
-            'science': '🔬 علوم', 'psychology': ' علم نفس'
-        };
-        
-        const TYPE_ICONS = {
-            'random': '🎲', 'book_summary': '', 'article': '📝', 'story': '📖',
-            'facts': '💡', 'tips': '🎯', 'news': '📰', 'philosophy': '🤔',
-            'history': '🏛️', 'science': '', 'psychology': '🧠'
-        };
-        
-        // صور Unsplash حسب النوع
-        const TYPE_IMAGES = {
-            'random': 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=70&auto=format',
-            'book_summary': 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&q=70&auto=format',
-            'article': 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&q=70&auto=format',
-            'story': 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&q=70&auto=format',
-            'facts': 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&q=70&auto=format',
-            'tips': 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?w=600&q=70&auto=format',
-            'news': 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=70&auto=format',
-            'philosophy': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=70&auto=format',
-            'history': 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=600&q=70&auto=format',
-            'science': 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&q=70&auto=format',
-            'psychology': 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=70&auto=format'
-        };
-        
-        let allPosts = [];
-        let currentFilter = 'all';
-        let currentSearch = '';
-        let displayedCount = 0;
-        let currentPostId = null;
-        const BATCH_SIZE = 5;
-        
-        // Theme
-        function toggleTheme() {
-            const html = document.documentElement;
-            const btn = document.getElementById('themeBtn');
-            const isDark = html.getAttribute('data-theme') === 'dark';
-            if (isDark) {
-                html.removeAttribute('data-theme');
-                btn.textContent = '🌙';
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.setAttribute('data-theme', 'dark');
-                btn.textContent = '☀️';
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            document.getElementById('themeBtn').textContent = '☀️';
-        }
-        
-        // Font Size
-        function setFontSize(size) {
-            document.body.className = document.body.className.replace(/font-\w+/g, '').trim();
-            if (size !== 'medium') document.body.classList.add('font-' + size);
-            localStorage.setItem('fontSize', size);
-        }
-        const savedSize = localStorage.getItem('fontSize');
-        if (savedSize) setFontSize(savedSize);
-        
-        // Live Time
-        function updateLiveTime() {
-            const now = new Date();
-            document.getElementById('liveTime').textContent = now.toLocaleTimeString('ar-SA', { hour12: false });
-            document.getElementById('liveDate').textContent = now.toLocaleDateString('ar-SA');
-        }
-        updateLiveTime();
-        setInterval(updateLiveTime, 1000);
-        
-        // Progress Bar
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById('progressBar').style.width = scrolled + '%';
-        });
-        
-        // Views Counter
-        function getViews(postId) {
-            return parseInt(localStorage.getItem('views_' + postId) || '0');
-        }
-        function incrementViews(postId) {
-            const views = getViews(postId) + 1;
-            localStorage.setItem('views_' + postId, views);
-            return views;
-        }
-        function getTotalViews() {
-            let total = 0;
-            allPosts.forEach(p => { total += getViews(p.id); });
-            return total;
-        }
-        
-        // Load Posts
-        async function loadPosts() {
-            // عرض فوري من الكاش
-            if (!window._cacheRendered) {
-                window._cacheRendered = true;
-                try {
-                    const c = localStorage.getItem('postsCache');
-                    if (c && allPosts.length === 0) {
-                        allPosts = JSON.parse(c);
-                        setTimeout(() => {
-                            try {
-                                if (typeof updateStats === 'function') updateStats();
-                                if (typeof buildCategoriesBar === 'function') buildCategoriesBar();
-                                if (typeof buildCategoryStats === 'function') buildCategoryStats();
-                                if (typeof buildFilters === 'function') buildFilters();
-                                if (typeof updateWidgets === 'function') updateWidgets();
-                                displayedCount = 0;
-                                displayPosts(true);
-                            } catch (e) {}
-                        }, 30);
-                    }
-                } catch (e) {}
-            }
-
-            const container = document.getElementById('postsContainer');
-            try {
-                const response = await fetch('posts.json?t=' + Date.now());
-                if (!response.ok) throw new Error('فشل التحميل');
-                allPosts = await response.json();
-                try { localStorage.setItem("postsCache", JSON.stringify(allPosts)); } catch (e) {}
-                updateStats();
-                buildCategoryStats();
-                buildFilters();
-                updateWidgets();
-                displayedCount = 0;
-                displayPosts(true);
-                if (allPosts.length > 0) {
-                    document.getElementById('lastUpdate').textContent = allPosts[0].date || '-';
-                }
-            } catch (error) {
-                container.innerHTML = `<div class="error">❌ خطأ: ${error.message}</div>`;
-            }
-        }
-        
-        function updateStats() {
-            document.getElementById('totalCount').textContent = allPosts.length;
-            document.getElementById('statTotal').textContent = allPosts.length;
-            const types = new Set(allPosts.map(p => p.type));
-            document.getElementById('statTypes').textContent = types.size;
-            document.getElementById('statViews').textContent = getTotalViews();
-            if (allPosts.length > 0) {
-                document.getElementById('statLast').textContent = allPosts[0].date || '-';
-            }
-        }
-        
-        function buildCategoryStats() {
-            const types = [...new Set(allPosts.map(p => p.type))];
-            const container = document.getElementById('categoryStats');
-            let html = `
-                <div class="category-item ${currentFilter === 'all' ? 'active' : ''}" data-type="all" onclick="selectCategory('all')">
-                    <div class="category-icon">📊</div>
-                    <div class="category-count">${allPosts.length}</div>
-                    <div class="category-label">الإجمالي</div>
-                </div>
-            `;
-            types.forEach(type => {
-                const count = allPosts.filter(p => p.type === type).length;
-                const icon = TYPE_ICONS[type] || '📄';
-                const label = TYPE_LABELS[type] || type;
-                html += `
-                    <div class="category-item ${currentFilter === type ? 'active' : ''}" data-type="${type}" onclick="selectCategory('${type}')">
-                        <div class="category-icon">${icon}</div>
-                        <div class="category-count">${count}</div>
-                        <div class="category-label">${label}</div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-        
-        function buildFilters() {
-            const types = [...new Set(allPosts.map(p => p.type))];
-            const container = document.getElementById('filtersContainer');
-            container.innerHTML = '<button class="font-btn active" data-type="all" onclick="selectCategory(\'all\')">الكل</button>';
-            types.forEach(type => {
-                const btn = document.createElement('button');
-                btn.className = 'font-btn';
-                btn.dataset.type = type;
-                btn.textContent = TYPE_LABELS[type] || type;
-                btn.onclick = () => selectCategory(type);
-                container.appendChild(btn);
-            });
-        }
-        
-        function selectCategory(type) {
-            currentFilter = type;
-            document.querySelectorAll('.category-item, .font-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.type === type);
-            });
-            displayedCount = 0;
-            displayPosts(true);
-        }
-        
-        function displayPosts(reset = false) {
-            const container = document.getElementById('postsContainer');
-            let filtered = allPosts;
-            if (currentFilter !== 'all') filtered = filtered.filter(p => p.type === currentFilter);
-            if (currentSearch) {
-                const search = currentSearch.toLowerCase();
-                filtered = filtered.filter(p => 
-                    (p.title && p.title.toLowerCase().includes(search)) ||
-                    (p.content && p.content.toLowerCase().includes(search))
-                );
-            }
-            if (reset) { container.innerHTML = ''; displayedCount = 0; }
-            if (filtered.length === 0 && reset) {
-                container.innerHTML = '<div class="empty">📭 لا توجد منشورات</div>';
-                return;
-            }
-            const nextBatch = filtered.slice(displayedCount, displayedCount + BATCH_SIZE);
-            nextBatch.forEach((post, i) => {
-                const card = createPostCard(post, displayedCount + i);
-                container.appendChild(card);
-            });
-            displayedCount += nextBatch.length;
-            if (displayedCount < filtered.length) {
-                const loader = document.createElement('div');
-                loader.className = 'loading';
-                loader.id = 'infiniteLoader';
-                loader.innerHTML = '<div class="spinner"></div><p>جاري تحميل المزيد...</p>';
-                container.appendChild(loader);
-            }
-        }
-        
-        function createPostCard(post, index) {
-            const div = document.createElement('div');
-            div.className = 'post-card';
-            div.style.animationDelay = (index % BATCH_SIZE) * 0.1 + 's';
-            
-            const readingTime = Math.max(1, Math.ceil((post.content || '').length / 200));
-            const savedRating = localStorage.getItem('rating_' + post.id) || 0;
-            const views = getViews(post.id);
-            const imageUrl = TYPE_IMAGES[post.type] || TYPE_IMAGES.random;
-            const isLong = (post.content || '').length > 400;
-            
-            div.innerHTML = `
-                <img class="post-image" src="${imageUrl}" alt="${post.title || ''}" loading="lazy" onerror="this.style.display='none'">
-                <div class="post-body">
-                    <div class="post-header">
-                        <span class="post-type">${TYPE_LABELS[post.type] || post.type}</span>
-                        <div class="post-meta">
-                            <span>⏱️ ${readingTime} دقيقة قراءة</span>
-                            <span> ${post.date || ''}</span>
-                            <span class="views-counter">👁️ ${views}</span>
-                        </div>
-                    </div>
-                    <h2 class="post-title" onclick="openPost(${post.id})">${post.title || 'بدون عنوان'}</h2>
-                    <div class="post-content ${isLong ? 'collapsed' : ''}" id="content-${post.id}">
-                        ${post.content || 'لا يوجد محتوى'}
-                    </div>
-                    ${isLong ? `<button class="read-more-btn" onclick="toggleContent(${post.id}, this)">📖 اقرأ المزيد</button>` : ''}
-                    <div class="post-footer">
-                        <div class="rating" data-post-id="${post.id}">
-                            ${[1,2,3,4,5].map(n => `<span class="star ${n <= savedRating ? 'active' : ''}" onclick="ratePost(${post.id}, ${n})">★</span>`).join('')}
-                        </div>
-                        <div class="post-actions">
-                            <button class="action-btn" onclick="openPost(${post.id})">📄 التفاصيل</button>
-                            <button class="action-btn" onclick="sharePost('${(post.title || '').replace(/'/g, "\\'")}', '${(post.content || '').substring(0, 100).replace(/'/g, "\\'")}')">📤 مشاركة</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            return div;
-        }
-        
-        function toggleContent(postId, btn) {
-            const content = document.getElementById('content-' + postId);
-            if (content.classList.contains('collapsed')) {
-                content.classList.remove('collapsed');
-                content.classList.add('expanded');
-                btn.innerHTML = '🔼 اقرأ أقل';
-            } else {
-                content.classList.remove('expanded');
-                content.classList.add('collapsed');
-                btn.innerHTML = '📖 اقرأ المزيد';
-            }
-        }
-        
-        function openPost(postId) {
-            const post = allPosts.find(p => p.id === postId);
-            if (!post) return;
-            
-            currentPostId = postId;
-            incrementViews(postId);
-            
-            const imageUrl = TYPE_IMAGES[post.type] || TYPE_IMAGES.random;
-            document.getElementById('modalImage').src = imageUrl;
-            document.getElementById('modalType').textContent = TYPE_LABELS[post.type] || post.type;
-            document.getElementById('modalTitle').textContent = post.title || 'بدون عنوان';
-            document.getElementById('modalDate').textContent = '🕐 ' + (post.date || '');
-            const readingTime = Math.max(1, Math.ceil((post.content || '').length / 200));
-            document.getElementById('modalReadingTime').textContent = '️ ' + readingTime + ' دقيقة قراءة';
-            document.getElementById('modalViews').textContent = getViews(postId);
-            document.getElementById('modalBody').textContent = post.content || '';
-            
-            const hashtagsContainer = document.getElementById('modalHashtags');
-            if (post.hashtags && post.hashtags.length > 0) {
-                hashtagsContainer.innerHTML = post.hashtags.map(h => `<span class="hashtag">${h}</span>`).join('');
-                hashtagsContainer.style.display = 'flex';
-            } else {
-                hashtagsContainer.style.display = 'none';
-            }
-            
-            loadComments(postId);
-            document.getElementById('postModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            // Update page title for SEO
-            document.title = post.title + ' | alkinani';
-        }
-        
-        function closeModal() {
-            document.getElementById('postModal').classList.remove('active');
-            document.body.style.overflow = '';
-            currentPostId = null;
-            document.title = 'alkinani | مركز المحتوى الذكي';
-        }
-        
-        // Close modal on overlay click
-        document.getElementById('postModal').addEventListener('click', (e) => {
-            if (e.target.id === 'postModal') closeModal();
-        });
-        
-        // Comments System
-        function getComments(postId) {
-            try {
-                return JSON.parse(localStorage.getItem('comments_' + postId) || '[]');
-            } catch { return []; }
-        }
-        
-        function saveComments(postId, comments) {
-            localStorage.setItem('comments_' + postId, JSON.stringify(comments));
-        }
-        
-        function loadComments(postId) {
-            const comments = getComments(postId);
-            document.getElementById('commentsCount').textContent = comments.length;
-            const container = document.getElementById('commentsContainer');
-            
-            if (comments.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">كن أول من يعلّق على هذا المنشور!</p>';
-                return;
-            }
-            
-            container.innerHTML = comments.map(c => `
-                <div class="comment-item">
-                    <div class="comment-author">${c.name}</div>
-                    <div class="comment-date">${c.date}</div>
-                    <div class="comment-text">${c.text}</div>
-                </div>
-            `).join('');
-        }
-        
-        function submitComment(e) {
-            e.preventDefault();
-            if (!currentPostId) return;
-            
-            const name = document.getElementById('commentName').value.trim();
-            const text = document.getElementById('commentText').value.trim();
-            
-            if (!name || !text) return;
-            
-            const comments = getComments(currentPostId);
-            comments.unshift({
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('ar-SA')
-            });
-            saveComments(currentPostId, comments);
-            
-            document.getElementById('commentName').value = '';
-            document.getElementById('commentText').value = '';
-            
-            loadComments(currentPostId);
-            updateWidgets();
-        }
-        
-        // Rating
-        function ratePost(postId, rating) {
-            localStorage.setItem('rating_' + postId, rating);
-            const stars = document.querySelectorAll(`[data-post-id="${postId}"] .star`);
-            stars.forEach((star, i) => { star.classList.toggle('active', i < rating); });
-        }
-        
-        // Search
-        document.getElementById('searchBox').addEventListener('input', (e) => {
-            currentSearch = e.target.value;
-            displayedCount = 0;
-            displayPosts(true);
-        });
-        
-        // Share
-        function sharePost(title, content) {
-            const text = `${title}\n\n${content}\n\n${window.location.href}`;
-            if (navigator.share) {
-                navigator.share({ title, text, url: window.location.href });
-            } else {
-                navigator.clipboard.writeText(text);
-                alert('✅ تم نسخ المنشور!');
-            }
-        }
-        
-        function shareTo(platform) {
-            const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent('alkinani - مركز المحتوى الذكي');
-            const urls = {
-                whatsapp: `https://wa.me/?text=${text}%20${url}`,
-                twitter: `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
-                facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`
-            };
-            window.open(urls[platform], '_blank', 'width=600,height=400');
-        }
-        
-        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        function scrollToPosts() { document.getElementById('postsContainer').scrollIntoView({ behavior: 'smooth' }); }
-        
-        function subscribeNewsletter(e) {
-            e.preventDefault();
-            alert('✅ تم الاشتراك بنجاح! (تجريبي)');
-            e.target.reset();
-        }
-        
-        function updateWidgets() {
-            const mostRead = document.getElementById('mostReadList');
-            const sorted = [...allPosts].sort((a, b) => getViews(b.id) - getViews(a.id));
-            const topPosts = sorted.slice(0, 5);
-            if (topPosts.length > 0) {
-                mostRead.innerHTML = topPosts.map((p, i) => 
-                    `<li onclick="openPost(${p.id})">${i+1}. ${p.title || 'منشور ' + (i+1)} <small style="color:var(--text-muted)">(${getViews(p.id)} مشاهدة)</small></li>`
-                ).join('');
-            }
-            
-            const comments = document.getElementById('commentsList');
-            let allComments = [];
-            allPosts.forEach(p => {
-                getComments(p.id).forEach(c => {
-                    allComments.push({ ...c, postTitle: p.title, postId: p.id });
-                });
-            });
-            allComments.sort((a, b) => new Date(b.date) - new Date(a.date));
-            const latest = allComments.slice(0, 3);
-            
-            if (latest.length > 0) {
-                comments.innerHTML = latest.map(c => 
-                    `<li onclick="openPost(${c.postId})"><strong>${c.name}:</strong> ${c.text.substring(0, 50)}...</li>`
-                ).join('');
-            } else {
-                comments.innerHTML = '<li>✨ كن أول من يعلّق!</li><li>المحتوى يتجدد يومياً</li>';
-            }
-        }
-        
-        // Infinite Scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const loader = document.getElementById('infiniteLoader');
-                    if (loader) { loader.remove(); displayPosts(false); }
-                }
-            });
-        }, { threshold: 0.1 });
-        
-        const originalDisplayPosts = displayPosts;
-        displayPosts = function(reset = false) {
-            originalDisplayPosts(reset);
-            setTimeout(() => {
-                const loader = document.getElementById('infiniteLoader');
-                if (loader) observer.observe(loader);
-            }, 100);
-        };
-        
-        // Keyboard shortcut to close modal
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
-        
-        // Init
-        loadPosts();
-        setInterval(loadPosts, 5 * 60 * 1000);
-    
-        // ========== CATEGORIES ==========
-        const CATEGORY_TYPES = [
-            { type: 'philosophy', icon: '🤔', label: 'فلسفة' },
-            { type: 'story', icon: '📖', label: 'قصص' },
-            { type: 'science', icon: '🔬', label: 'علوم' },
-            { type: 'article', icon: '📝', label: 'مقالات' },
-            { type: 'book_summary', icon: '📚', label: 'ملخصات كتب' },
-            { type: 'facts', icon: '💡', label: 'حقائق' },
-            { type: 'tips', icon: '🎯', label: 'نصائح' },
-            { type: 'news', icon: '📰', label: 'أخبار تقنية' },
-            { type: 'history', icon: '🏛️', label: 'تاريخ' },
-            { type: 'psychology', icon: '🧠', label: 'علم نفس' },
-            { type: 'random', icon: '🎲', label: 'عشوائي' }
-        ];
-        function buildCategoriesBar() {
-            const bar = document.getElementById('categoriesBar');
-            if (!bar || typeof allPosts === 'undefined' || !allPosts.length) return;
-            const counts = {};
-            allPosts.forEach(p => { const t = p.type || 'random'; counts[t] = (counts[t] || 0) + 1; });
-            let html = '<button class="category-chip ' + (currentFilter === 'all' ? 'active' : '') + '" onclick="selectCategory(\'all\')"><span>🏠</span> الرئيسية <span class="chip-count">' + allPosts.length + '</span></button>';
-            CATEGORY_TYPES.forEach(c => {
-                const n = counts[c.type] || 0;
-                if (!n) return;
-                html += '<button class="category-chip ' + (currentFilter === c.type ? 'active' : '') + '" onclick="selectCategory(\'' + c.type + '\')"><span>' + c.icon + '</span> ' + c.label + ' <span class="chip-count">' + n + '</span></button>';
-            });
-            bar.innerHTML = html;
-        }
-        function scrollCategories(d) {
-            const bar = document.getElementById('categoriesBar');
-            if (bar) bar.scrollBy({ left: d * 250, behavior: 'smooth' });
-        }
-        // ربط بالدوال القديمة
-        window.buildCategoryStats = buildCategoriesBar;
-        const _oldSel = window.selectCategory;
-        window.selectCategory = function(type) {
-            currentFilter = type;
-            buildCategoriesBar();
-            if (typeof _oldSel === 'function') _oldSel(type);
-            else { displayedCount = 0; displayPosts(true); }
-        };
-        setInterval(buildCategoriesBar, 60000);
-    
-        // ========== LAZY LOAD LIBRARIES ==========
-        function loadScript(src) {
-            return new Promise((resolve, reject) => {
-                if (document.querySelector('script[src="' + src + '"]')) return resolve();
-                const s = document.createElement('script');
-                s.src = src; s.onload = resolve; s.onerror = reject;
-                document.body.appendChild(s);
-            });
-        }
-        async function ensurePDF() {
-            if (typeof html2pdf === 'undefined')
-                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
-        }
-        async function ensureQR() {
-            if (typeof QRCode === 'undefined')
-                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js');
-        }
-    
-        // ========== INSTAGRAM CARD SYSTEM ==========
-        function getLikes(id) { return parseInt(localStorage.getItem('likes_' + id) || '0'); }
-        function isLiked(id) { return localStorage.getItem('liked_' + id) === '1'; }
-        if (typeof window.isFavorite !== 'function') window.isFavorite = function(id) { try { return JSON.parse(localStorage.getItem('favorites') || '[]').includes(id); } catch (e) { return false; } };
-        if (typeof window.toggleFavorite !== 'function') window.toggleFavorite = function(id) { try { var f = JSON.parse(localStorage.getItem('favorites') || '[]'); var i = f.indexOf(id); if (i > -1) f.splice(i, 1); else f.push(id); localStorage.setItem('favorites', JSON.stringify(f)); } catch (e) {} };
-        if (typeof window.getComments !== 'function') window.getComments = function(id) { try { return JSON.parse(localStorage.getItem('comments_' + id) || '[]'); } catch (e) { return []; } };
-        if (typeof window.saveComments !== 'function') window.saveComments = function(id, c) { localStorage.setItem('comments_' + id, JSON.stringify(c)); };
-        if (typeof window.shareTo !== 'function') window.shareTo = function(p) { var url = encodeURIComponent(location.href); var t = encodeURIComponent('alkinani'); var urls = { whatsapp: 'https://wa.me/?text=' + t + '%20' + url, telegram: 'https://t.me/share/url?url=' + url + '&text=' + t, twitter: 'https://twitter.com/intent/tweet?text=' + t + '&url=' + url, facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + url, linkedin: 'https://www.linkedin.com/sharing/share-offsite/?url=' + url }; window.open(urls[p] || urls.telegram, '_blank'); };
-        
-        function toggleLike(id) {
-            var likes = getLikes(id);
-            if (isLiked(id)) { likes = Math.max(0, likes - 1); localStorage.removeItem('liked_' + id); }
-            else { likes++; localStorage.setItem('liked_' + id, '1'); }
-            localStorage.setItem('likes_' + id, likes);
-            updateLikeUI(id);
-        }
-        function doubleTapLike(id, el) {
-            if (!isLiked(id)) { localStorage.setItem('likes_' + id, getLikes(id) + 1); localStorage.setItem('liked_' + id, '1'); }
-            var burst = el.querySelector('.insta-heart-burst');
-            if (burst) { burst.classList.remove('show'); void burst.offsetWidth; burst.classList.add('show'); }
-            setTimeout(function() { updateLikeUI(id); }, 700);
-        }
-        function updateLikeUI(id) {
-            var card = document.querySelector('[data-insta-id="' + id + '"]');
-            if (!card) return;
-            var btn = card.querySelector('.insta-like-btn');
-            var count = card.querySelector('.insta-likes-count');
-            if (btn) btn.textContent = isLiked(id) ? '❤️' : '🤍';
-            if (count) count.textContent = getLikes(id).toLocaleString('ar-EG') + ' إعجاب';
-        }
-        function quickComment(postId, input) {
-            var text = input.value.trim();
-            if (!text) return;
-            var comments = getComments(postId);
-            var name = localStorage.getItem('userName') || 'زائر';
-            comments.unshift({ name: name, text: text, date: new Date().toLocaleString('ar-SA') });
-            saveComments(postId, comments);
-            input.value = '';
-            if (typeof showToast === 'function') showToast('تمت إضافة التعليق 💬', 'success');
-            var card = document.querySelector('[data-insta-id="' + postId + '"]');
-            if (card) { var link = card.querySelector('.insta-comments-link'); if (link) link.textContent = 'عرض جميع التعليقات (' + comments.length + ')'; }
-        }
-        
-        function createInstaCard(post, index) {
-            var div = document.createElement('div');
-            div.className = 'insta-card';
-            div.setAttribute('data-insta-id', post.id);
-            div.style.animationDelay = (index % 5) * 0.08 + 's';
-            var imageUrl = (typeof TYPE_IMAGES !== 'undefined' && TYPE_IMAGES[post.type]) || 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=70&auto=format';
-            var icon = (typeof TYPE_ICONS !== 'undefined' && TYPE_ICONS[post.type]) || '📄';
-            var label = (typeof TYPE_LABELS !== 'undefined' && TYPE_LABELS[post.type]) || post.type || '';
-            var commentsCount = getComments(post.id).length;
-            var contentText = post.content || '';
-            var preview = contentText.length > 90 ? contentText.substring(0, 90) + '... ' : contentText;
-            var tags = (post.hashtags || []).slice(0, 4);
-            div.innerHTML = 
-                '<div class="insta-header">' +
-                    '<div class="insta-avatar-ring"><div class="insta-avatar">' + icon + '</div></div>' +
-                    '<div class="insta-user">' +
-                        '<div class="insta-username">alkinani</div>' +
-                        '<div class="insta-location">' + label + ' • ' + (post.date || '') + '</div>' +
-                    '</div>' +
-                    '<button class="insta-menu" onclick="openPost(' + post.id + ')">⋯</button>' +
-                '</div>' +
-                '<div class="insta-image" ondblclick="doubleTapLike(' + post.id + ', this)">' +
-                    '<img src="' + imageUrl + '" alt="" loading="lazy">' +
-                    '<div class="insta-heart-burst">❤️</div>' +
-                '</div>' +
-                '<div class="insta-actions">' +
-                    '<button class="insta-like-btn" onclick="toggleLike(' + post.id + ')">' + (isLiked(post.id) ? '❤️' : '🤍') + '</button>' +
-                    '<button onclick="openPost(' + post.id + ')">💬</button>' +
-                    '<button onclick="shareTo('telegram')">📤</button>' +
-                    '<button class="insta-save" onclick="toggleFavorite(' + post.id + ')">' + (isFavorite(post.id) ? '🔖' : '🏷️') + '</button>' +
-                '</div>' +
-                '<div class="insta-likes"><strong class="insta-likes-count">' + getLikes(post.id).toLocaleString('ar-EG') + ' إعجاب</strong></div>' +
-                '<div class="insta-caption">' +
-                    '<span class="insta-username">alkinani</span>' +
-                    '<span class="insta-title">' + (post.title || '') + '</span>' +
-                    '<span>' + preview + '</span>' +
-                    (contentText.length > 90 ? '<button class="insta-more" onclick="openPost(' + post.id + ')">المزيد</button>' : '') +
-                    (tags.length ? '<div class="insta-hashtags">' + tags.map(function(h) { return '<span>' + h + '</span>'; }).join('') + '</div>' : '') +
-                '</div>' +
-                '<div class="insta-comments-link" onclick="openPost(' + post.id + ')">عرض جميع التعليقات (' + commentsCount + ')</div>' +
-                '<div class="insta-time">' + (post.date || '') + '</div>' +
-                '<div class="insta-add-comment">' +
-                    '<input type="text" placeholder="أضف تعليقاً..." onkeydown="if(event.key==='Enter') quickComment(' + post.id + ', this)">' +
-                    '<button onclick="quickComment(' + post.id + ', this.previousElementSibling)">نشر</button>' +
-                '</div>';
-            return div;
-        }
-        window.createPostCard = createInstaCard;
-    </script>
+<div class="topbar">
+<span>🕐 <span id="liveTime">--:--:--</span></span>
+<span>📅 <span id="liveDate">----</span></span>
+<span>↻ آخر تحديث: <strong id="lastUpdate">-</strong></span>
+</div>
+<div class="container">
+<header>
+<div class="logo">alkinani</div>
+<p class="subtitle">مركز المحتوى المُولّد والمنشور تلقائيًا بالذكاء الاصطناعي</p>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+</header>
+<section class="hero" id="heroSection">
+<h2 id="heroTitle"></h2>
+<p id="heroDesc"></p>
+<a href="#" id="heroLink" target="_blank">اعرف المزيد</a>
+</section>
+<div class="cats-wrap">
+<button class="sbtn r" onclick="scrollCats(1)">❯</button>
+<div class="cats" id="catsBar"></div>
+<button class="sbtn l" onclick="scrollCats(-1)">❮</button>
+</div>
+<div class="controls">
+<input type="text" class="search" id="searchBox" placeholder="🔍 ابحث في المنشورات...">
+<div class="crow">
+<span style="font-size:12px;color:var(--muted)">حجم الخط:
+<button class="fbtn" onclick="setFont(14)">A-</button>
+<button class="fbtn" onclick="setFont(16)">A</button>
+<button class="fbtn" onclick="setFont(18)">A+</button>
+</span>
+</div>
+</div>
+<div class="layout">
+<main class="posts" id="postsContainer"><div class="loading"><div class="spinner"></div>جاري تحميل المنشورات...</div></main>
+<aside class="side">
+<div class="widget"><h3 class="wtitle">🔥 الأكثر قراءة</h3><ul class="wlist" id="wMost"><li>جاري التحميل...</li></ul></div>
+<div class="widget"><h3 class="wtitle">💬 آخر التعليقات</h3><ul class="wlist" id="wComments"><li>كن أول من يعلّق!</li></ul></div>
+<div class="widget"><h3 class="wtitle">📧 النشرة البريدية</h3><form class="nform" onsubmit="subscribe(event)"><input type="email" placeholder="بريدك الإلكتروني" required><button type="submit">اشترك الآن</button></form></div>
+<div class="widget"><h3 class="wtitle">📊 إحصائيات</h3><ul class="wlist">
+<li>📚 المنشورات: <strong id="sTotal">0</strong></li>
+<li>🏷️ الأنواع: <strong id="sTypes">0</strong></li>
+<li>👁️ المشاهدات: <strong id="sViews">0</strong></li>
+</ul></div>
+</aside>
+</div>
+<footer>© 2026 alkinani - جميع الحقوق محفوظة</footer>
+</div>
+<div class="modal" id="postModal">
+<div class="m-box">
+<button class="m-close" onclick="closeModal()">✕</button>
+<img class="m-img" id="mImg" src="" alt="">
+<div class="m-body">
+<span class="chip active" id="mType"></span>
+<h1 class="m-title" id="mTitle"></h1>
+<div class="m-meta"><span id="mDate"></span><span id="mRead"></span><span>👁️ <span id="mViews">0</span></span></div>
+<div class="m-text" id="mText"></div>
+<div class="i-tags" id="mTags"></div>
+<div class="m-actions">
+<button class="abtn" onclick="shareTo('telegram')">✈️ تيليجرام</button>
+<button class="abtn" onclick="shareTo('whatsapp')">📱 واتساب</button>
+<button class="abtn" onclick="shareTo('twitter')">🐦 تويتر</button>
+<button class="abtn" onclick="copyText()">📋 نسخ</button>
+</div>
+<div style="margin-top:20px">
+<h3 class="wtitle">💬 التعليقات (<span id="cCount">0</span>)</h3>
+<form class="cform" onsubmit="addComment(event)">
+<input type="text" id="cName" placeholder="اسمك" required>
+<textarea id="cText" placeholder="اكتب تعليقك..." required></textarea>
+<button type="submit">إرسال</button>
+</form>
+<div id="cList"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="toasts" id="toasts"></div>
+<script>
+var allPosts=[],currentFilter='all',currentSearch='',shown=0,currentPostId=null,BATCH=5;
+var TYPE_LABELS={random:'عشوائي',book_summary:'ملخص كتاب',article:'مقال',story:'قصة',facts:'حقائق',tips:'نصائح',news:'خبر تقني',philosophy:'فلسفة',history:'تاريخ',science:'علوم',psychology:'علم نفس'};
+var TYPE_ICONS={random:'🎲',book_summary:'📚',article:'📝',story:'📖',facts:'💡',tips:'🎯',news:'📰',philosophy:'🤔',history:'🏛️',science:'🔬',psychology:'🧠'};
+var TYPE_IMAGES={random:'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=70&auto=format',book_summary:'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&q=70&auto=format',article:'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&q=70&auto=format',story:'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&q=70&auto=format',facts:'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&q=70&auto=format',tips:'https://images.unsplash.com/photo-1512314889357-e157c22f938d?w=600&q=70&auto=format',news:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=70&auto=format',philosophy:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=70&auto=format',history:'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=600&q=70&auto=format',science:'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&q=70&auto=format',psychology:'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=70&auto=format'};
+function $(id){return document.getElementById(id);}
+function setText(id,v){var e=$(id);if(e)e.textContent=v;}
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function toast(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;var c=$('toasts');if(c)c.appendChild(t);setTimeout(function(){t.remove();},3000);}
+function tick(){var n=new Date();setText('liveTime',n.toLocaleTimeString('ar-SA',{hour12:false}));setText('liveDate',n.toLocaleDateString('ar-SA'));}
+tick();setInterval(tick,1000);
+function toggleTheme(){var d=document.documentElement.getAttribute('data-theme')==='dark';if(d){document.documentElement.removeAttribute('data-theme');setText('themeBtn','🌙');lsSet('theme','light');}else{document.documentElement.setAttribute('data-theme','dark');setText('themeBtn','☀️');lsSet('theme','dark');}}
+if(lsGet('theme','')==='dark'){document.documentElement.setAttribute('data-theme','dark');setText('themeBtn','☀️');}
+function setFont(s){document.body.style.fontSize=s+'px';lsSet('font',s);}
+var sf=lsGet('font','');if(sf)document.body.style.fontSize=sf+'px';
+function getViews(id){return parseInt(lsGet('v_'+id,'0'),10)||0;}
+function getLikes(id){return parseInt(lsGet('l_'+id,'0'),10)||0;}
+function isLiked(id){return lsGet('lk_'+id,'')==='1';}
+function isFav(id){try{return JSON.parse(lsGet('favs','[]')).indexOf(id)>-1;}catch(e){return false;}}
+function getComments(id){try{return JSON.parse(lsGet('c_'+id,'[]'));}catch(e){return [];}}
+function toggleLike(id){var l=getLikes(id);if(isLiked(id)){l=Math.max(0,l-1);try{localStorage.removeItem('lk_'+id);}catch(e){}}else{l++;lsSet('lk_'+id,'1');}lsSet('l_'+id,l);likeUI(id);}
+function likeUI(id){var card=document.querySelector('[data-card="'+id+'"]');if(!card)return;var b=card.querySelector('.like-btn');var c=card.querySelector('.like-cnt');if(b)b.textContent=isLiked(id)?'❤️':'🤍';if(c)c.textContent=getLikes(id)+' إعجاب';}
+function dblLike(id,el){if(!isLiked(id)){lsSet('l_'+id,getLikes(id)+1);lsSet('lk_'+id,'1');}var b=el.querySelector('.i-burst');if(b){b.classList.remove('show');void b.offsetWidth;b.classList.add('show');}setTimeout(function(){likeUI(id);},700);}
+function toggleFav(id){var f=[];try{f=JSON.parse(lsGet('favs','[]'));}catch(e){}var i=f.indexOf(id);if(i>-1){f.splice(i,1);toast('أزيل من المفضلة');}else{f.push(id);toast('⭐ أضيف للمفضلة');}lsSet('favs',JSON.stringify(f));}
+function scrollCats(d){var b=$('catsBar');if(b)b.scrollBy({left:d*250,behavior:'smooth'});}
+function selectCat(t){currentFilter=t;buildCats();shown=0;renderPosts(true);}
+function buildCats(){var b=$('catsBar');if(!b)return;var counts={};allPosts.forEach(function(p){var t=p.type||'random';counts[t]=(counts[t]||0)+1;});
+var h='<button class="chip'+(currentFilter==='all'?' active':'')+'" onclick="selectCat(\'all\')">🏠 الرئيسية <span class="cnt">'+allPosts.length+'</span></button>';
+Object.keys(TYPE_LABELS).forEach(function(t){var n=counts[t]||0;if(!n)return;h+='<button class="chip'+(currentFilter===t?' active':'')+'" onclick="selectCat(\''+t+'\')">'+TYPE_ICONS[t]+' '+TYPE_LABELS[t]+' <span class="cnt">'+n+'</span></button>';});
+b.innerHTML=h;}
+function filtered(){var list=allPosts;if(currentFilter!=='all')list=list.filter(function(p){return (p.type||'random')===currentFilter;});if(currentSearch){var q=currentSearch.toLowerCase();list=list.filter(function(p){return ((p.title||'')+(p.content||'')).toLowerCase().indexOf(q)>-1;});}return list;}
+function renderPosts(reset){var c=$('postsContainer');if(!c)return;var list=filtered();if(reset){c.innerHTML='';shown=0;}
+if(list.length===0&&reset){c.innerHTML='<div class="empty">📭 لا توجد منشورات</div>';return;}
+var batch=list.slice(shown,shown+BATCH);batch.forEach(function(p){c.appendChild(makeCard(p));});shown+=batch.length;
+if(shown<list.length){var l=document.createElement('div');l.className='loading';l.id='moreLoader';l.innerHTML='<div class="spinner"></div>جاري تحميل المزيد...';c.appendChild(l);}}
+function makeCard(p){var d=document.createElement('div');d.className='insta-card';d.setAttribute('data-card',p.id);
+var img=TYPE_IMAGES[p.type]||TYPE_IMAGES.random;var content=p.content||'';var prev=content.length>90?content.substring(0,90)+'... ':content;
+var tags=(p.hashtags||[]).slice(0,4);var cc=getComments(p.id).length;
+d.innerHTML='<div class="i-head"><div class="i-ring"><div class="i-av">'+(TYPE_ICONS[p.type]||'📄')+'</div></div><div class="i-user"><div class="i-name">alkinani</div><div class="i-loc">'+(TYPE_LABELS[p.type]||'')+' • '+(p.date||'')+'</div></div><button style="background:none;border:none;font-size:20px;cursor:pointer" onclick="openPost('+p.id+')">⋯</button></div>'+
+'<div class="i-img" ondblclick="dblLike('+p.id+',this)"><img src="'+img+'" alt="" loading="lazy"><div class="i-burst">❤️</div></div>'+
+'<div class="i-actions"><button class="like-btn" onclick="toggleLike('+p.id+')">'+(isLiked(p.id)?'❤️':'🤍')+'</button><button onclick="openPost('+p.id+')">💬</button><button onclick="shareTo(\'telegram\')">📤</button><button class="i-save" onclick="toggleFav('+p.id+')">'+(isFav(p.id)?'🔖':'️')+'</button></div>'+
+'<div class="i-likes"><strong class="like-cnt">'+getLikes(p.id)+' إعجاب</strong></div>'+
+'<div class="i-cap"><span class="i-name">alkinani</span><span class="i-title">'+(p.title||'')+'</span><span>'+prev+'</span>'+(content.length>90?'<button class="i-more" onclick="openPost('+p.id+')">المزيد</button>':'')+(tags.length?'<div class="i-tags">'+tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>':'')+'</div>'+
+'<div class="i-clink" onclick="openPost('+p.id+')">عرض جميع التعليقات ('+cc+')</div>'+
+'<div class="i-time">'+(p.date||'')+'</div>'+
+'<div class="i-add"><input type="text" placeholder="أضف تعليقاً..." onkeydown="if(event.key===\'Enter\')quickC('+p.id+',this)"><button onclick="quickC('+p.id+',this.previousElementSibling)">نشر</button></div>';
+return d;}
+function quickC(id,inp){var t=inp.value.trim();if(!t)return;var cs=getComments(id);cs.unshift({name:lsGet('userName','زائر'),text:t,date:new Date().toLocaleString('ar-SA')});lsSet('c_'+id,JSON.stringify(cs));inp.value='';toast('💬 تم إضافة التعليق');var card=document.querySelector('[data-card="'+id+'"]');if(card){var l=card.querySelector('.i-clink');if(l)l.textContent='عرض جميع التعليقات ('+cs.length+')';}}
+function openPost(id){var p=null;for(var i=0;i<allPosts.length;i++){if(allPosts[i].id===id){p=allPosts[i];break;}}if(!p)return;currentPostId=id;
+lsSet('v_'+id,getViews(id)+1);
+$('mImg').src=TYPE_IMAGES[p.type]||TYPE_IMAGES.random;$('mType').textContent=(TYPE_ICONS[p.type]||'')+' '+(TYPE_LABELS[p.type]||'');
+$('mTitle').textContent=p.title||'';$('mDate').textContent='🕐 '+(p.date||'');$('mRead').textContent='⏱️ '+Math.max(1,Math.ceil((p.content||'').length/200))+' دقيقة';$('mViews').textContent=getViews(id);$('mText').textContent=p.content||'';
+var tags=(p.hashtags||[]);$('mTags').innerHTML=tags.map(function(t){return '<span>'+t+'</span>';}).join('');
+loadComments(id);$('postModal').classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){$('postModal').classList.remove('open');document.body.style.overflow='';}
+$('postModal').addEventListener('click',function(e){if(e.target.id==='postModal')closeModal();});
+function loadComments(id){var cs=getComments(id);setText('cCount',cs.length);var c=$('cList');if(!c)return;
+if(!cs.length){c.innerHTML='<p style="color:var(--muted);text-align:center;padding:15px">كن أول من يعلّق!</p>';return;}
+c.innerHTML=cs.map(function(x){return '<div class="citem"><div class="cname">'+x.name+'</div><div class="cdate">'+x.date+'</div><div class="ctext">'+x.text+'</div></div>';}).join('');}
+function addComment(e){e.preventDefault();if(!currentPostId)return;var n=$('cName').value.trim(),t=$('cText').value.trim();if(!n||!t)return;var cs=getComments(currentPostId);cs.unshift({name:n,text:t,date:new Date().toLocaleString('ar-SA')});lsSet('c_'+currentPostId,JSON.stringify(cs));lsSet('userName',n);$('cName').value='';$('cText').value='';loadComments(currentPostId);widgets();toast('💬 تم إضافة التعليق');}
+function shareTo(pl){var p=null;for(var i=0;i<allPosts.length;i++){if(allPosts[i].id===currentPostId){p=allPosts[i];break;}}
+var title=p?(p.title||'alkinani'):'alkinani - مركز المحتوى الذكي';var url=encodeURIComponent(location.href);var tx=encodeURIComponent(title);
+var urls={whatsapp:'https://wa.me/?text='+tx+'%20'+url,telegram:'https://t.me/share/url?url='+url+'&text='+tx,twitter:'https://twitter.com/intent/tweet?text='+tx+'&url='+url,facebook:'https://www.facebook.com/sharer/sharer.php?u='+url};
+window.open(urls[pl],'_blank');}
+function copyText(){var p=null;for(var i=0;i<allPosts.length;i++){if(allPosts[i].id===currentPostId){p=allPosts[i];break;}}if(p&&navigator.clipboard){navigator.clipboard.writeText((p.title||'')+'\n\n'+(p.content||''));toast('📋 تم النسخ');}}
+function subscribe(e){e.preventDefault();toast('✅ تم الاشتراك!');e.target.reset();}
+function widgets(){var m=$('wMost');if(m){var s=allPosts.slice().sort(function(a,b){return getViews(b.id)-getViews(a.id);}).slice(0,5);
+m.innerHTML=s.length?s.map(function(p,i){return '<li onclick="openPost('+p.id+')">'+(i+1)+'. '+(p.title||'منشور')+' ('+getViews(p.id)+')</li>';}).join(''):'<li>لا يوجد</li>';}
+var wc=$('wComments');if(wc){var all=[];allPosts.forEach(function(p){getComments(p.id).forEach(function(x){all.push({x:x,pid:p.id});});});
+wc.innerHTML=all.length?all.slice(0,3).map(function(o){return '<li onclick="openPost('+o.pid+')"><strong>'+o.x.name+':</strong> '+o.x.text.substring(0,40)+'</li>';}).join(''):'<li>كن أول من يعلّق!</li>';}
+setText('sTotal',allPosts.length);var types={};allPosts.forEach(function(p){types[p.type||'random']=1;});setText('sTypes',Object.keys(types).length);
+var tv=0;allPosts.forEach(function(p){tv+=getViews(p.id);});setText('sViews',tv);}
+function loadAds(){fetch('ads.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(ads){var today=new Date().toISOString().split('T')[0];
+var ad=null;for(var i=0;i<ads.length;i++){var a=ads[i];if(a.active&&(!a.startDate||a.startDate<=today)&&(!a.endDate||a.endDate>=today)){ad=a;break;}}
+var h=$('heroSection');if(ad&&h){h.style.display='block';setText('heroTitle',ad.title);setText('heroDesc',ad.description);$('heroLink').href=ad.link||'#';}else if(h){h.style.display='none';}}).catch(function(){var h=$('heroSection');if(h)h.style.display='none';});}
+function loadPosts(){var cached=lsGet('postsCache','');if(cached){try{allPosts=JSON.parse(cached);renderAll();}catch(e){}}
+fetch('posts.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(posts){allPosts=posts;lsSet('postsCache',JSON.stringify(posts));renderAll();}).catch(function(){var c=$('postsContainer');if(c&&allPosts.length===0)c.innerHTML='<div class="empty">📭 تعذر التحميل</div>';});}
+function renderAll(){buildCats();shown=0;renderPosts(true);widgets();var d=allPosts[0]&&allPosts[0].date?allPosts[0].date:'-';setText('lastUpdate',d);}
+$('searchBox').addEventListener('input',function(e){currentSearch=e.target.value;shown=0;renderPosts(true);});
+var obs=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){var l=$('moreLoader');if(l){l.remove();renderPosts(false);}}});},{threshold:0.1});
+setInterval(function(){var l=$('moreLoader');if(l)obs.observe(l);},500);
+loadPosts();loadAds();
+</script>
 </body>
 </html>
