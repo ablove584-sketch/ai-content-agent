@@ -23,7 +23,7 @@ on:
           - science
           - psychology
       book_name:
-        description: 'اسم الكتاب (للملخصات فقط)'
+        description: 'اسم الكتاب'
         required: false
         default: ''
         type: string
@@ -59,25 +59,59 @@ jobs:
       - name: Run Content Agent
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-1.5-flash' }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-          CONTENT_LANGUAGE: ${{ vars.CONTENT_LANGUAGE || 'ar' }}
-          CONTENT_TOPICS: ${{ vars.CONTENT_TOPICS }}
-          CONTENT_STYLE: ${{ vars.CONTENT_STYLE || 'احترافي، مفيد، واضح' }}
-          CONTENT_AUDIENCE: ${{ vars.CONTENT_AUDIENCE || 'الجمهور العربي' }}
-          DUPLICATE_THRESHOLD: ${{ vars.DUPLICATE_THRESHOLD || '0.78' }}
-          MAX_GENERATION_ATTEMPTS: ${{ vars.MAX_GENERATION_ATTEMPTS || '6' }}
-          MEMORY_CONTEXT_LIMIT: ${{ vars.MEMORY_CONTEXT_LIMIT || '100' }}
-          MAX_HASHTAGS: ${{ vars.MAX_HASHTAGS || '5' }}
-          DRY_RUN: ${{ vars.DRY_RUN || 'false' }}
-          PUBLISH_HOURS: ${{ vars.PUBLISH_HOURS || '' }}
-          PUBLISH_DAYS: ${{ vars.PUBLISH_DAYS || '' }}
           CONTENT_TYPE: ${{ github.event.inputs.content_type || 'random' }}
           BOOK_NAME: ${{ github.event.inputs.book_name || '' }}
           CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
         run: |
           python main.py
+
+      - name: Save post to JSON
+        run: |
+          python3 << 'PYEOF'
+          import json
+          import os
+          from datetime import datetime
+          
+          # قراءة المنشور الأخير من قاعدة البيانات
+          posts_file = 'docs/posts.json'
+          
+          # تحميل المنشورات الموجودة
+          if os.path.exists(posts_file):
+              with open(posts_file, 'r', encoding='utf-8') as f:
+                  posts = json.load(f)
+          else:
+              posts = []
+          
+          # إضافة المنشور الجديد (من آخر run)
+          new_post = {
+              "id": len(posts) + 1,
+              "title": "منشور جديد",
+              "content": "تم نشر محتوى جديد",
+              "type": os.getenv("CONTENT_TYPE", "random"),
+              "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+              "url": f"https://github.com/{os.getenv('GITHUB_REPOSITORY', 'ablove584-sketch/ai-content-agent')}/actions/runs/{os.getenv('GITHUB_RUN_ID', 'unknown')}"
+          }
+          
+          posts.insert(0, new_post)
+          
+          # حفظ آخر 50 منشور فقط
+          posts = posts[:50]
+          
+          with open(posts_file, 'w', encoding='utf-8') as f:
+              json.dump(posts, f, ensure_ascii=False, indent=2)
+          
+          print(f"Saved {len(posts)} posts to {posts_file}")
+          PYEOF
+
+      - name: Commit and push posts.json
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/posts.json
+          git commit -m "Update posts list" || echo "No changes"
+          git push
 
       - name: Upload database as artifact
         uses: actions/upload-artifact@v4
