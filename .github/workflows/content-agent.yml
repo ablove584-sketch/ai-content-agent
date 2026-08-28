@@ -2,9 +2,36 @@ name: AI Content Agent
 
 on:
   schedule:
-    # كل ساعة (أكثر موثوقية مع Gemini free tier)
     - cron: '0 * * * *'
   workflow_dispatch:
+    inputs:
+      content_type:
+        description: 'نوع المحتوى'
+        required: false
+        default: 'random'
+        type: choice
+        options:
+          - random
+          - book_summary
+          - article
+          - story
+          - facts
+          - tips
+          - news
+          - philosophy
+          - history
+          - science
+          - psychology
+      book_name:
+        description: 'اسم الكتاب (للملخصات فقط)'
+        required: false
+        default: ''
+        type: string
+      custom_topic:
+        description: 'موضوع مخصص'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: write
@@ -46,6 +73,9 @@ jobs:
           DRY_RUN: ${{ vars.DRY_RUN || 'false' }}
           PUBLISH_HOURS: ${{ vars.PUBLISH_HOURS || '' }}
           PUBLISH_DAYS: ${{ vars.PUBLISH_DAYS || '' }}
+          CONTENT_TYPE: ${{ github.event.inputs.content_type || 'random' }}
+          BOOK_NAME: ${{ github.event.inputs.book_name || '' }}
+          CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
         run: |
           python main.py
 
