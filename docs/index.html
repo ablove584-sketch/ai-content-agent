@@ -3,68 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>alkinani</title>
+    <meta name="description" content="alkinani - منصة محتوى متنوعة تُولَّد وتُنشَر تلقائيًا بالذكاء الاصطناعي">
+    <meta name="keywords" content="محتوى, ذكاء اصطناعي, مقالات, قصص, ملخصات كتب">
+    <meta name="author" content="alkinani">
+    <meta name="theme-color" content="#667eea">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="alkinani - مركز المحتوى">
+    <meta property="og:description" content="منصة محتوى متنوعة تُولَّد بالذكاء الاصطناعي">
+    <meta property="og:type" content="website">
+    
+    <title>alkinani | مركز المحتوى</title>
+    
+    <!-- Schema.org Markup for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "alkinani",
+        "description": "مركز المحتوى المُولّد والمنشور تلقائيًا بالذكاء الاصطناعي",
+        "url": "https://ablove584-sketch.github.io/ai-content-agent/"
+    }
+    </script>
+    
     <style>
+        /* ========== CSS Variables ========== */
         :root {
             --primary: #667eea;
+            --primary-dark: #5a67d8;
             --secondary: #764ba2;
-            --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --card-bg: white;
-            --text: #333;
-            --text-secondary: #666;
-            --border: #e0e0e0;
-            --shadow: 0 10px 40px rgba(0,0,0,0.1);
+            --accent: #f093fb;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 20px 50px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --font-size-base: 16px;
+            --font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         [data-theme="dark"] {
-            --card-bg: #1e1e2e;
-            --text: #e0e0e0;
-            --text-secondary: #a0a0a0;
-            --border: #333;
-            --shadow: 0 10px 40px rgba(0,0,0,0.3);
+            --bg-color: #0f0f1e;
+            --card-bg: #1a1a2e;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+            --border-color: #2d3748;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+            --shadow-lg: 0 20px 50px rgba(0,0,0,0.5);
         }
         
+        /* ========== Reset & Base ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        html { scroll-behavior: smooth; }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg);
-            min-height: 100vh;
-            padding: 20px;
-            color: var(--text);
-            transition: all 0.3s;
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            background: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: var(--transition);
+            overflow-x: hidden;
         }
         
+        /* ========== Reading Progress Bar ========== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 0%;
+            height: 3px;
+            background: var(--bg-gradient);
+            z-index: 9999;
+            transition: width 0.1s;
+        }
+        
+        /* ========== Top Bar ========== */
+        .top-bar {
+            background: var(--bg-gradient);
+            color: white;
+            padding: 8px 20px;
+            text-align: center;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .top-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            opacity: 0.95;
+        }
+        
+        /* ========== Container ========== */
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
         
-        /* Top Bar - Last Update */
-        .top-bar {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            padding: 8px 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            text-align: center;
-            color: white;
-            font-size: 12px;
-        }
-        
-        .top-bar time {
-            font-weight: 600;
-        }
-        
-        /* Header */
+        /* ========== Header ========== */
         header {
             background: var(--card-bg);
-            border-radius: 20px;
-            padding: 40px 30px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
+            border-radius: var(--radius-lg);
+            padding: 50px 30px;
+            margin: 20px 0;
+            box-shadow: var(--shadow-md);
             text-align: center;
-            animation: slideDown 0.5s ease;
+            position: relative;
+            animation: slideDown 0.6s ease;
         }
         
         @keyframes slideDown {
@@ -73,115 +136,170 @@
         }
         
         .logo {
-            font-size: 48px;
-            font-weight: 300;
-            letter-spacing: 8px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            font-size: 56px;
+            font-weight: 200;
+            letter-spacing: 10px;
+            background: var(--bg-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 15px;
             font-family: 'Courier New', monospace;
+            text-transform: lowercase;
         }
         
         .subtitle {
             color: var(--text-secondary);
             font-size: 16px;
-            line-height: 1.6;
+            line-height: 1.8;
             max-width: 600px;
-            margin: 0 auto;
+            margin: 0 auto 25px;
         }
         
-        /* Category Stats Bar */
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .icon-btn {
+            background: var(--bg-color);
+            border: 2px solid var(--border-color);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: var(--transition);
+            color: var(--text-primary);
+        }
+        
+        .icon-btn:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        /* ========== Hero Section ========== */
+        .hero {
+            background: var(--bg-gradient);
+            border-radius: var(--radius-lg);
+            padding: 50px 30px;
+            margin: 20px 0;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 16px;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto 25px;
+        }
+        
+        .hero-btn {
+            background: white;
+            color: var(--primary);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        /* ========== Category Bar ========== */
         .category-bar {
             background: var(--card-bg);
-            border-radius: 15px;
+            border-radius: var(--radius-md);
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            animation: slideDown 0.5s ease 0.1s both;
+            margin: 20px 0;
+            box-shadow: var(--shadow-sm);
         }
         
         .category-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
         }
         
         .category-item {
-            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 15px;
+            background: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 15px 10px;
             text-align: center;
-            transition: all 0.3s;
+            transition: var(--transition);
             cursor: pointer;
         }
         
         .category-item:hover, .category-item.active {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: var(--bg-gradient);
             color: white;
             transform: translateY(-3px);
             border-color: transparent;
         }
         
-        .category-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
+        .category-icon { font-size: 22px; margin-bottom: 5px; }
+        .category-count { font-size: 22px; font-weight: bold; }
+        .category-label { font-size: 11px; opacity: 0.85; margin-top: 3px; }
         
-        .category-count {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .category-label {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-        
-        /* Theme Toggle */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: var(--card-bg);
-            color: var(--primary);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
-            box-shadow: var(--shadow);
-            transition: all 0.3s;
-            z-index: 1000;
-        }
-        
-        .theme-toggle:hover { 
-            transform: rotate(180deg) scale(1.1);
-        }
-        
-        /* Search & Filter */
+        /* ========== Controls ========== */
         .controls {
             background: var(--card-bg);
-            border-radius: 15px;
+            border-radius: var(--radius-md);
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            animation: slideDown 0.5s ease 0.2s both;
+            margin: 20px 0;
+            box-shadow: var(--shadow-sm);
         }
         
         .search-box {
             width: 100%;
             padding: 12px 15px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            background: var(--card-bg);
-            color: var(--text);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            transition: var(--transition);
         }
         
         .search-box:focus {
@@ -189,39 +307,64 @@
             border-color: var(--primary);
         }
         
-        .filters {
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .font-controls {
             display: flex;
             gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
+            align-items: center;
         }
         
-        .filter-btn {
-            padding: 8px 16px;
-            border: 2px solid var(--border);
-            background: var(--card-bg);
-            color: var(--text);
-            border-radius: 20px;
+        .font-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
-            transition: all 0.3s;
+            color: var(--text-primary);
+            transition: var(--transition);
         }
         
-        .filter-btn:hover, .filter-btn.active {
+        .font-btn:hover {
             background: var(--primary);
             color: white;
-            border-color: var(--primary);
         }
         
-        /* Posts */
+        /* ========== Main Layout ========== */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 900px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+        
+        /* ========== Posts ========== */
+        .posts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
         .post-card {
             background: var(--card-bg);
-            border-radius: 15px;
+            border-radius: var(--radius-md);
             padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            transition: all 0.3s;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
             animation: fadeIn 0.5s ease;
+            border-right: 4px solid transparent;
         }
         
         @keyframes fadeIn {
@@ -231,20 +374,21 @@
         
         .post-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow-lg);
+            border-right-color: var(--primary);
         }
         
         .post-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
             gap: 10px;
         }
         
         .post-type {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            background: var(--bg-gradient);
             color: white;
             padding: 5px 12px;
             border-radius: 20px;
@@ -252,16 +396,20 @@
             font-weight: 600;
         }
         
-        .post-date {
-            color: var(--text-secondary);
+        .post-meta {
+            color: var(--text-muted);
             font-size: 12px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         
         .post-title {
-            color: var(--text);
+            color: var(--text-primary);
             font-size: 22px;
             margin-bottom: 12px;
             line-height: 1.4;
+            font-weight: 700;
         }
         
         .post-content {
@@ -271,21 +419,45 @@
             margin-bottom: 15px;
         }
         
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .rating {
+            display: flex;
+            gap: 3px;
+        }
+        
+        .star {
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--border-color);
+            transition: var(--transition);
+        }
+        
+        .star.active, .star:hover { color: #fbbf24; }
+        
         .post-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         
         .action-btn {
-            padding: 8px 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
+            padding: 7px 14px;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             cursor: pointer;
             font-size: 13px;
-            transition: all 0.3s;
+            transition: var(--transition);
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -293,152 +465,382 @@
         }
         
         .action-btn:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
         
-        /* Loading & Empty */
+        /* ========== Sidebar Widgets ========== */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .widget {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .widget-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .widget-list {
+            list-style: none;
+        }
+        
+        .widget-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .widget-list li:last-child { border-bottom: none; }
+        
+        .widget-list li:hover {
+            color: var(--primary);
+            padding-right: 8px;
+        }
+        
+        .newsletter-form input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .newsletter-form button {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .newsletter-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* ========== Floating Share Buttons ========== */
+        .floating-share {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        @media (max-width: 1200px) {
+            .floating-share { display: none; }
+        }
+        
+        .share-fab {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: white;
+            transition: var(--transition);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .share-fab:hover { transform: scale(1.15); }
+        .share-wa { background: #25D366; }
+        .share-tw { background: #1DA1F2; }
+        .share-fb { background: #1877F2; }
+        .share-top { background: var(--primary); }
+        
+        /* ========== Loading ========== */
         .loading, .empty, .error {
             background: var(--card-bg);
             padding: 40px;
-            border-radius: 15px;
+            border-radius: var(--radius-md);
             text-align: center;
-            box-shadow: var(--shadow);
-            color: var(--text);
+            box-shadow: var(--shadow-sm);
+            color: var(--text-primary);
         }
         
         .loading { color: var(--primary); }
-        .error { background: #f8d7da; color: #721c24; }
+        .error { background: #fed7d7; color: #c53030; }
         
-        /* Footer */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* ========== Footer ========== */
         footer {
             text-align: center;
-            padding: 20px;
-            color: white;
-            opacity: 0.8;
-            font-size: 14px;
-            margin-top: 30px;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 40px;
         }
         
-        /* Responsive */
-        @media (max-width: 600px) {
-            .logo { font-size: 36px; letter-spacing: 4px; }
+        /* ========== Responsive ========== */
+        @media (max-width: 768px) {
+            .logo { font-size: 40px; letter-spacing: 6px; }
+            .hero h2 { font-size: 24px; }
             .post-title { font-size: 18px; }
-            .category-count { font-size: 20px; }
+            .container { padding: 10px; }
+            header { padding: 30px 20px; }
         }
+        
+        /* ========== Font Size Classes ========== */
+        .font-small { --font-size-base: 14px; }
+        .font-medium { --font-size-base: 16px; }
+        .font-large { --font-size-base: 18px; }
+        .font-xlarge { --font-size-base: 20px; }
     </style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()" title="تغيير الوضع">🌙</button>
+    <!-- Reading Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- Top Bar with Live Time -->
+    <div class="top-bar">
+        <div class="top-bar-item">
+            <span></span>
+            <time id="liveTime">--:--:--</time>
+        </div>
+        <div class="top-bar-item">
+            <span>📅</span>
+            <time id="liveDate">----/--/--</time>
+        </div>
+        <div class="top-bar-item">
+            <span></span>
+            <span>آخر تحديث للمنشورات: <strong id="lastUpdate">-</strong></span>
+        </div>
+    </div>
+    
+    <!-- Floating Share Buttons -->
+    <div class="floating-share">
+        <button class="share-fab share-wa" onclick="shareTo('whatsapp')" title="واتساب">📱</button>
+        <button class="share-fab share-tw" onclick="shareTo('twitter')" title="تويتر">🐦</button>
+        <button class="share-fab share-fb" onclick="shareTo('facebook')" title="فيسبوك">📘</button>
+        <button class="share-fab share-top" onclick="scrollToTop()" title="للأعلى">⬆️</button>
+    </div>
     
     <div class="container">
-        <div class="top-bar">
-            <span>🕐 آخر تحديث: </span>
-            <time id="lastUpdateTime">-</time>
-        </div>
-        
+        <!-- Header -->
         <header>
             <div class="logo">alkinani</div>
             <p class="subtitle">
-                منصة محتوى متنوعة تُنشَر تلقائيًا باستخدام الذكاء الاصطناعي<br>
-                مقالات • ملخصات • قصص • حقائق • نصائح • والمزيد
+                مركز المحتوى المُولّد والمنشور تلقائيًا بالذكاء الاصطناعي
             </p>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleTheme()" title="الوضع الداكن" id="themeBtn">🌙</button>
+            </div>
         </header>
         
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2>✨ اكتشف عالماً من المحتوى الذكي</h2>
+                <p>مقالات • ملخصات كتب • قصص • حقائق • نصائح • فلسفة • علوم • والمزيد</p>
+                <button class="hero-btn" onclick="scrollToPosts()">🚀 استكشف المنشورات</button>
+            </div>
+        </section>
+        
+        <!-- Category Bar -->
         <div class="category-bar">
             <div class="category-stats" id="categoryStats">
-                <div class="category-item" data-type="all" onclick="selectCategory('all')">
-                    <div class="category-icon">📊</div>
+                <div class="category-item active" data-type="all" onclick="selectCategory('all')">
+                    <div class="category-icon"></div>
                     <div class="category-count" id="totalCount">0</div>
-                    <div class="category-label">إجمالي المنشورات</div>
+                    <div class="category-label">الإجمالي</div>
                 </div>
             </div>
         </div>
         
+        <!-- Controls -->
         <div class="controls">
             <input type="text" class="search-box" id="searchBox" placeholder="🔍 ابحث في المنشورات...">
-            <div class="filters" id="filtersContainer">
-                <button class="filter-btn active" data-type="all">الكل</button>
+            <div class="controls-row">
+                <div class="filters" id="filtersContainer">
+                    <button class="font-btn active" data-type="all" onclick="selectCategory('all')">الكل</button>
+                </div>
+                <div class="font-controls">
+                    <span style="font-size:12px;color:var(--text-muted)">حجم الخط:</span>
+                    <button class="font-btn" onclick="setFontSize('small')">A-</button>
+                    <button class="font-btn" onclick="setFontSize('medium')">A</button>
+                    <button class="font-btn" onclick="setFontSize('large')">A+</button>
+                    <button class="font-btn" onclick="setFontSize('xlarge')">A++</button>
+                </div>
             </div>
         </div>
         
-        <div id="postsContainer">
-            <div class="loading">⏳ جاري تحميل المنشورات...</div>
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Posts -->
+            <main class="posts-container" id="postsContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>جاري تحميل المنشورات...</p>
+                </div>
+            </main>
+            
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Most Read Widget -->
+                <div class="widget">
+                    <h3 class="widget-title">🔥 الأكثر قراءة</h3>
+                    <ul class="widget-list" id="mostReadList">
+                        <li>جاري التحميل...</li>
+                    </ul>
+                </div>
+                
+                <!-- Latest Comments Widget -->
+                <div class="widget">
+                    <h3 class="widget-title">💬 آخر التعليقات</h3>
+                    <ul class="widget-list" id="commentsList">
+                        <li>لا توجد تعليقات بعد</li>
+                    </ul>
+                </div>
+                
+                <!-- Newsletter Widget -->
+                <div class="widget">
+                    <h3 class="widget-title">📧 النشرة البريدية</h3>
+                    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;">
+                        اشترك لتصلك أحدث المنشورات
+                    </p>
+                    <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                        <input type="email" placeholder="بريدك الإلكتروني" required>
+                        <button type="submit">اشترك الآن</button>
+                    </form>
+                </div>
+                
+                <!-- Stats Widget -->
+                <div class="widget">
+                    <h3 class="widget-title"> إحصائيات</h3>
+                    <ul class="widget-list">
+                        <li>📚 إجمالي المنشورات: <strong id="statTotal">0</strong></li>
+                        <li>🏷️ أنواع المحتوى: <strong id="statTypes">0</strong></li>
+                        <li>⏱️ آخر تحديث: <strong id="statLast">-</strong></li>
+                    </ul>
+                </div>
+            </aside>
         </div>
         
+        <!-- Footer -->
         <footer>
             <p>منصة آلية · مدعومة بالذكاء الاصطناعي · GitHub Actions + Gemini API</p>
+            <p style="margin-top:8px;">© 2026 alkinani - جميع الحقوق محفوظة</p>
         </footer>
     </div>
-
+    
     <script>
+        // ========== Data ==========
         const TYPE_LABELS = {
             'random': '🎲 عشوائي',
-            'book_summary': '📚 ملخص كتاب',
+            'book_summary': ' ملخص كتاب',
             'article': ' مقال',
             'story': ' قصة',
             'facts': '💡 حقائق',
             'tips': '🎯 نصائح',
             'news': '📰 خبر تقني',
             'philosophy': ' فلسفة',
-            'history': '🏛️ تاريخ',
-            'science': '🔬 علوم',
-            'psychology': '🧠 علم نفس'
+            'history': '️ تاريخ',
+            'science': ' علوم',
+            'psychology': ' علم نفس'
         };
         
         const TYPE_ICONS = {
-            'random': '🎲',
-            'book_summary': '📚',
-            'article': '',
-            'story': '📖',
-            'facts': '💡',
-            'tips': '🎯',
-            'news': '📰',
-            'philosophy': '🤔',
-            'history': '️',
-            'science': '',
-            'psychology': ''
+            'random': '', 'book_summary': '📚', 'article': '📝',
+            'story': '📖', 'facts': '💡', 'tips': '🎯', 'news': '📰',
+            'philosophy': '🤔', 'history': '🏛️', 'science': '🔬', 'psychology': '🧠'
         };
         
         let allPosts = [];
         let currentFilter = 'all';
         let currentSearch = '';
+        let displayedCount = 0;
+        const BATCH_SIZE = 5;
         
-        // Theme
+        // ========== Theme ==========
         function toggleTheme() {
             const html = document.documentElement;
-            const btn = document.querySelector('.theme-toggle');
-            if (html.getAttribute('data-theme') === 'dark') {
+            const btn = document.getElementById('themeBtn');
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
                 html.removeAttribute('data-theme');
                 btn.textContent = '🌙';
                 localStorage.setItem('theme', 'light');
             } else {
                 html.setAttribute('data-theme', 'dark');
-                btn.textContent = '️';
+                btn.textContent = '☀️';
                 localStorage.setItem('theme', 'dark');
             }
         }
         
-        // Load saved theme
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
-            document.querySelector('.theme-toggle').textContent = '☀️';
+            document.getElementById('themeBtn').textContent = '☀️';
         }
         
-        // Update last update time
-        function updateLastUpdateTime() {
+        // ========== Font Size ==========
+        function setFontSize(size) {
+            document.body.className = document.body.className.replace(/font-\w+/g, '').trim();
+            if (size !== 'medium') document.body.classList.add('font-' + size);
+            localStorage.setItem('fontSize', size);
+        }
+        
+        const savedSize = localStorage.getItem('fontSize');
+        if (savedSize) setFontSize(savedSize);
+        
+        // ========== Live Time ==========
+        function updateLiveTime() {
             const now = new Date();
-            const timeString = now.toLocaleString('ar-SA', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            document.getElementById('lastUpdateTime').textContent = timeString;
+            const time = now.toLocaleTimeString('ar-SA', { hour12: false });
+            const date = now.toLocaleDateString('ar-SA');
+            document.getElementById('liveTime').textContent = time;
+            document.getElementById('liveDate').textContent = date;
         }
+        updateLiveTime();
+        setInterval(updateLiveTime, 1000);
         
+        // ========== Reading Progress ==========
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+        
+        // ========== Load Posts ==========
         async function loadPosts() {
             const container = document.getElementById('postsContainer');
             
@@ -448,18 +850,17 @@
                 
                 allPosts = await response.json();
                 
-                // Update stats
                 updateStats();
-                
-                // Update last update time
-                updateLastUpdateTime();
-                
-                // Build filters and categories
-                buildFilters();
                 buildCategoryStats();
+                buildFilters();
+                updateWidgets();
+                displayedCount = 0;
+                displayPosts(true);
                 
-                // Display posts
-                displayPosts();
+                // Update last update
+                if (allPosts.length > 0) {
+                    document.getElementById('lastUpdate').textContent = allPosts[0].date || '-';
+                }
                 
             } catch (error) {
                 container.innerHTML = `<div class="error">❌ خطأ: ${error.message}</div>`;
@@ -468,18 +869,23 @@
         
         function updateStats() {
             document.getElementById('totalCount').textContent = allPosts.length;
+            document.getElementById('statTotal').textContent = allPosts.length;
+            const types = new Set(allPosts.map(p => p.type));
+            document.getElementById('statTypes').textContent = types.size;
+            if (allPosts.length > 0) {
+                document.getElementById('statLast').textContent = allPosts[0].date || '-';
+            }
         }
         
         function buildCategoryStats() {
             const types = [...new Set(allPosts.map(p => p.type))];
             const container = document.getElementById('categoryStats');
             
-            // Keep the total count item
             let html = `
-                <div class="category-item" data-type="all" onclick="selectCategory('all')">
+                <div class="category-item ${currentFilter === 'all' ? 'active' : ''}" data-type="all" onclick="selectCategory('all')">
                     <div class="category-icon">📊</div>
-                    <div class="category-count" id="totalCount">${allPosts.length}</div>
-                    <div class="category-label">إجمالي المنشورات</div>
+                    <div class="category-count">${allPosts.length}</div>
+                    <div class="category-label">الإجمالي</div>
                 </div>
             `;
             
@@ -489,7 +895,7 @@
                 const label = TYPE_LABELS[type] || type;
                 
                 html += `
-                    <div class="category-item" data-type="${type}" onclick="selectCategory('${type}')">
+                    <div class="category-item ${currentFilter === type ? 'active' : ''}" data-type="${type}" onclick="selectCategory('${type}')">
                         <div class="category-icon">${icon}</div>
                         <div class="category-count">${count}</div>
                         <div class="category-label">${label}</div>
@@ -503,30 +909,29 @@
         function buildFilters() {
             const types = [...new Set(allPosts.map(p => p.type))];
             const container = document.getElementById('filtersContainer');
-            container.innerHTML = '<button class="filter-btn active" data-type="all">الكل</button>';
+            container.innerHTML = '<button class="font-btn active" data-type="all" onclick="selectCategory(\'all\')">الكل</button>';
             
             types.forEach(type => {
                 const btn = document.createElement('button');
-                btn.className = 'filter-btn';
+                btn.className = 'font-btn';
                 btn.dataset.type = type;
                 btn.textContent = TYPE_LABELS[type] || type;
                 btn.onclick = () => selectCategory(type);
                 container.appendChild(btn);
             });
-            
-            // Re-attach all button
-            container.querySelector('[data-type="all"]').onclick = () => selectCategory('all');
         }
         
         function selectCategory(type) {
             currentFilter = type;
-            document.querySelectorAll('.filter-btn, .category-item').forEach(btn => {
+            document.querySelectorAll('.category-item, .font-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.type === type);
             });
-            displayPosts();
+            displayedCount = 0;
+            displayPosts(true);
         }
         
-        function displayPosts() {
+        // ========== Infinite Scroll Display ==========
+        function displayPosts(reset = false) {
             const container = document.getElementById('postsContainer');
             
             let filtered = allPosts;
@@ -543,50 +948,167 @@
                 );
             }
             
-            if (filtered.length === 0) {
+            if (reset) {
+                container.innerHTML = '';
+                displayedCount = 0;
+            }
+            
+            if (filtered.length === 0 && reset) {
                 container.innerHTML = '<div class="empty">📭 لا توجد منشورات</div>';
                 return;
             }
             
-            container.innerHTML = filtered.map((post, i) => `
-                <div class="post-card" style="animation-delay: ${i * 0.1}s">
-                    <div class="post-header">
-                        <span class="post-type">${TYPE_LABELS[post.type] || post.type}</span>
-                        <span class="post-date">🕐 ${post.date}</span>
-                    </div>
-                    <h2 class="post-title">${post.title || 'بدون عنوان'}</h2>
-                    <p class="post-content">${(post.content || '').substring(0, 300)}${(post.content || '').length > 300 ? '...' : ''}</p>
-                    <div class="post-actions">
-                        ${post.url && post.url !== '#' ? `<a href="${post.url}" class="action-btn" target="_blank">🔗 التفاصيل</a>` : ''}
-                        <button class="action-btn" onclick="sharePost('${post.title}', '${(post.content || '').substring(0, 100)}')">📤 مشاركة</button>
-                    </div>
-                </div>
-            `).join('');
+            const nextBatch = filtered.slice(displayedCount, displayedCount + BATCH_SIZE);
+            
+            nextBatch.forEach((post, i) => {
+                const card = createPostCard(post, displayedCount + i);
+                container.appendChild(card);
+            });
+            
+            displayedCount += nextBatch.length;
+            
+            // Show loading indicator if more posts exist
+            if (displayedCount < filtered.length) {
+                const loader = document.createElement('div');
+                loader.className = 'loading';
+                loader.id = 'infiniteLoader';
+                loader.innerHTML = '<div class="spinner"></div><p>جاري تحميل المزيد...</p>';
+                container.appendChild(loader);
+            }
         }
         
+        function createPostCard(post, index) {
+            const div = document.createElement('div');
+            div.className = 'post-card';
+            div.style.animationDelay = (index % BATCH_SIZE) * 0.1 + 's';
+            
+            const readingTime = Math.max(1, Math.ceil((post.content || '').length / 200));
+            const savedRating = localStorage.getItem('rating_' + post.id) || 0;
+            
+            div.innerHTML = `
+                <div class="post-header">
+                    <span class="post-type">${TYPE_LABELS[post.type] || post.type}</span>
+                    <div class="post-meta">
+                        <span>️ ${readingTime} دقيقة قراءة</span>
+                        <span>🕐 ${post.date || ''}</span>
+                    </div>
+                </div>
+                <h2 class="post-title">${post.title || 'بدون عنوان'}</h2>
+                <p class="post-content">${(post.content || '').substring(0, 400)}${(post.content || '').length > 400 ? '...' : ''}</p>
+                <div class="post-footer">
+                    <div class="rating" data-post-id="${post.id}">
+                        ${[1,2,3,4,5].map(n => `
+                            <span class="star ${n <= savedRating ? 'active' : ''}" onclick="ratePost(${post.id}, ${n})">★</span>
+                        `).join('')}
+                    </div>
+                    <div class="post-actions">
+                        ${post.url && post.url !== '#' ? `<a href="${post.url}" class="action-btn" target="_blank"> التفاصيل</a>` : ''}
+                        <button class="action-btn" onclick="sharePost('${(post.title || '').replace(/'/g, "\\'")}', '${(post.content || '').substring(0, 100).replace(/'/g, "\\'")}')">📤 مشاركة</button>
+                    </div>
+                </div>
+            `;
+            
+            return div;
+        }
+        
+        // ========== Infinite Scroll Observer ==========
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const loader = document.getElementById('infiniteLoader');
+                    if (loader) {
+                        loader.remove();
+                        displayPosts(false);
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        // Observe after posts load
+        function setupInfiniteScroll() {
+            const loader = document.getElementById('infiniteLoader');
+            if (loader) observer.observe(loader);
+        }
+        
+        // Override displayPosts to setup observer
+        const originalDisplayPosts = displayPosts;
+        displayPosts = function(reset = false) {
+            originalDisplayPosts(reset);
+            setTimeout(setupInfiniteScroll, 100);
+        };
+        
+        // ========== Rating ==========
+        function ratePost(postId, rating) {
+            localStorage.setItem('rating_' + postId, rating);
+            const stars = document.querySelectorAll(`[data-post-id="${postId}"] .star`);
+            stars.forEach((star, i) => {
+                star.classList.toggle('active', i < rating);
+            });
+        }
+        
+        // ========== Search ==========
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            displayedCount = 0;
+            displayPosts(true);
+        });
+        
+        // ========== Share ==========
         function sharePost(title, content) {
+            const text = `${title}\n\n${content}\n\n${window.location.href}`;
             if (navigator.share) {
-                navigator.share({
-                    title: title,
-                    text: content,
-                    url: window.location.href
-                });
+                navigator.share({ title, text, url: window.location.href });
             } else {
-                navigator.clipboard.writeText(`${title}\n\n${content}\n\n${window.location.href}`);
+                navigator.clipboard.writeText(text);
                 alert('✅ تم نسخ المنشور!');
             }
         }
         
-        // Search
-        document.getElementById('searchBox').addEventListener('input', (e) => {
-            currentSearch = e.target.value;
-            displayPosts();
-        });
+        function shareTo(platform) {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('alkinani - مركز المحتوى الذكي');
+            const urls = {
+                whatsapp: `https://wa.me/?text=${text}%20${url}`,
+                twitter: `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+                facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`
+            };
+            window.open(urls[platform], '_blank', 'width=600,height=400');
+        }
         
-        // Load
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function scrollToPosts() {
+            document.getElementById('postsContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // ========== Newsletter ==========
+        function subscribeNewsletter(e) {
+            e.preventDefault();
+            alert('✅ تم الاشتراك بنجاح! (تجريبي)');
+            e.target.reset();
+        }
+        
+        // ========== Widgets ==========
+        function updateWidgets() {
+            // Most Read (simulate with first posts)
+            const mostRead = document.getElementById('mostReadList');
+            const topPosts = allPosts.slice(0, 5);
+            if (topPosts.length > 0) {
+                mostRead.innerHTML = topPosts.map((p, i) => 
+                    `<li onclick="selectCategory('${p.type}')">${i+1}. ${p.title || 'منشور ' + (i+1)}</li>`
+                ).join('');
+            }
+            
+            // Comments (placeholder)
+            const comments = document.getElementById('commentsList');
+            comments.innerHTML = '<li> كن أول من يعلّق!</li><li>✨ المحتوى يتجدد يومياً</li>';
+        }
+        
+        // ========== Init ==========
         loadPosts();
         setInterval(loadPosts, 5 * 60 * 1000);
-        setInterval(updateLastUpdateTime, 1000); // Update time every second
     </script>
 </body>
 </html>
