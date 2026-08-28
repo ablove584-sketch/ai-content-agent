@@ -57,6 +57,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Content Agent
+        id: run-agent
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -66,6 +67,7 @@ jobs:
           CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
         run: |
           python main.py
+          echo "workflow_id=${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
 
       - name: Save post to JSON
         run: |
@@ -74,44 +76,65 @@ jobs:
           import os
           from datetime import datetime
           
-          # قراءة المنشور الأخير من قاعدة البيانات
           posts_file = 'docs/posts.json'
           
           # تحميل المنشورات الموجودة
           if os.path.exists(posts_file):
-              with open(posts_file, 'r', encoding='utf-8') as f:
-                  posts = json.load(f)
+              try:
+                  with open(posts_file, 'r', encoding='utf-8') as f:
+                      posts = json.load(f)
+              except:
+                  posts = []
           else:
               posts = []
           
-          # إضافة المنشور الجديد (من آخر run)
+          # قراءة المنشور الأخير من قاعدة البيانات
+          content_type = os.getenv("CONTENT_TYPE", "random")
+          book_name = os.getenv("BOOK_NAME", "")
+          custom_topic = os.getenv("CUSTOM_TOPIC", "")
+          workflow_id = os.getenv("WORKFLOW_ID", "unknown")
+          
+          # إنشاء منشور جديد
           new_post = {
               "id": len(posts) + 1,
-              "title": "منشور جديد",
-              "content": "تم نشر محتوى جديد",
-              "type": os.getenv("CONTENT_TYPE", "random"),
+              "title": f"منشور جديد #{len(posts) + 1}",
+              "content": "تم إنشاء محتوى جديد بنجاح. يمكن عرض التفاصيل من خلال الرابط.",
+              "topic": custom_topic if custom_topic else (book_name if book_name else "موضوع عام"),
+              "angle": "زاوية جديدة",
+              "core_idea": "فكرة أساسية للمنشور",
+              "keywords": ["محتوى", "ذكاء اصطناعي", content_type],
+              "hashtags": ["#محتوى", "#ذكاء_اصطناعي"],
+              "type": content_type,
               "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-              "url": f"https://github.com/{os.getenv('GITHUB_REPOSITORY', 'ablove584-sketch/ai-content-agent')}/actions/runs/{os.getenv('GITHUB_RUN_ID', 'unknown')}"
+              "url": f"https://github.com/{os.getenv('GITHUB_REPOSITORY')}/actions/runs/{workflow_id}"
           }
           
+          # إضافة المنشور الجديد في البداية
           posts.insert(0, new_post)
           
           # حفظ آخر 50 منشور فقط
           posts = posts[:50]
           
+          # التأكد من وجود مجلد docs
+          os.makedirs('docs', exist_ok=True)
+          
+          # حفظ الملف
           with open(posts_file, 'w', encoding='utf-8') as f:
               json.dump(posts, f, ensure_ascii=False, indent=2)
           
-          print(f"Saved {len(posts)} posts to {posts_file}")
+          print(f"✅ Saved {len(posts)} posts to {posts_file}")
+          print(f"Latest post: {new_post['title']}")
           PYEOF
+        env:
+          WORKFLOW_ID: ${{ steps.run-agent.outputs.workflow_id }}
 
       - name: Commit and push posts.json
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add docs/posts.json
-          git commit -m "Update posts list" || echo "No changes"
-          git push
+          git diff --quiet && git diff --staged --quiet || (git commit -m "📝 Update posts list - auto" && git push)
+        continue-on-error: true
 
       - name: Upload database as artifact
         uses: actions/upload-artifact@v4
