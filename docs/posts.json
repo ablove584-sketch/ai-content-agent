@@ -1,5 +1,13 @@
 [
   {
+    "id": 2,
+    "title": "منشور جديد",
+    "content": "تم نشر محتوى جديد",
+    "type": "random",
+    "date": "2026-08-28 10:40:26",
+    "url": "https://github.com/ablove584-sketch/ai-content-agent/actions/runs/33164227558"
+  },
+  {
     "id": 1,
     "title": "مرحباً بك!",
     "content": "هذه الصفحة ستعرض المنشورات المنشورة تلقائياً.",
