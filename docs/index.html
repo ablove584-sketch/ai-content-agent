@@ -27,7 +27,8 @@ header{background:var(--card);border-radius:20px;padding:40px 20px;margin:15px 0
 .cats-wrap{position:relative;background:var(--card);border-radius:15px;padding:12px 45px;margin:15px 0;box-shadow:var(--shadow)}
 .cats{display:flex;gap:10px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none}
 .cats::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:var(--bg);border:2px solid var(--border);border-radius:25px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text);white-space:nowrap}
+.chip{flex-shrink:0;display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:var(--bg);border:2px solid var(--border);border-radius:25px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;transition:all .3s}
+.chip:hover{border-color:var(--primary);color:var(--primary)}
 .chip.active{background:var(--grad);color:#fff;border-color:transparent}
 .chip .cnt{background:rgba(128,128,128,.2);padding:1px 8px;border-radius:10px;font-size:11px}
 .chip.active .cnt{background:rgba(255,255,255,.25)}
@@ -35,11 +36,14 @@ header{background:var(--card);border-radius:20px;padding:40px 20px;margin:15px 0
 .sbtn.r{right:6px}.sbtn.l{left:6px}
 .controls{background:var(--card);border-radius:15px;padding:15px;margin:15px 0;box-shadow:var(--shadow)}
 .search{width:100%;padding:12px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-size:15px}
+.search:focus{outline:none;border-color:var(--primary)}
 .crow{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:10px}
 .fbtn{background:var(--bg);border:1px solid var(--border);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text)}
+.fbtn:hover{background:var(--primary);color:#fff}
 .layout{display:grid;grid-template-columns:1fr 300px;gap:15px}
 @media(max-width:900px){.layout{grid-template-columns:1fr}}
 .posts{display:flex;flex-direction:column;gap:15px}
+/* Instagram Card */
 .insta-card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;max-width:520px;margin:0 auto;width:100%}
 .i-head{display:flex;align-items:center;gap:10px;padding:12px 14px}
 .i-ring{width:44px;height:44px;border-radius:50%;padding:3px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);flex-shrink:0}
@@ -52,19 +56,21 @@ header{background:var(--card);border-radius:20px;padding:40px 20px;margin:15px 0
 .i-burst{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);font-size:90px;opacity:0;pointer-events:none}
 .i-burst.show{animation:hb .8s ease}
 @keyframes hb{0%{transform:translate(-50%,-50%) scale(0);opacity:0}15%{transform:translate(-50%,-50%) scale(1.2);opacity:1}30%{transform:translate(-50%,-50%) scale(1)}70%{opacity:1}100%{transform:translate(-50%,-50%) scale(0);opacity:0}}
-.i-actions{display:flex;align-items:center;gap:14px;padding:10px 14px 4px}
-.i-actions button{background:none;border:none;font-size:24px;cursor:pointer;padding:0}
+.i-actions{display:flex;align-items:center;gap:8px;padding:10px 14px 4px}
+.i-actions button{background:none;border:none;cursor:pointer;padding:0;color:var(--text);display:flex;align-items:center}
+.i-actions svg{width:26px;height:26px}
 .i-save{margin-inline-start:auto}
+.i-cnt{font-size:13px;font-weight:700;color:var(--text);margin-inline-end:6px}
 .i-likes{padding:0 14px;font-size:14px}
-.i-cap{padding:6px 14px;font-size:14px;color:var(--muted)}
+.i-cap{padding:6px 14px;font-size:14px;color:var(--muted);line-height:1.6}
 .i-title{font-weight:700;color:var(--text);display:block;margin:4px 0;font-size:15px}
 .i-more{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0}
 .i-tags{color:#3897f0;font-size:13px;margin-top:4px;display:flex;flex-wrap:wrap;gap:6px}
-.i-clink{padding:4px 14px;font-size:13px;color:var(--muted);cursor:pointer}
-.i-time{padding:0 14px 10px;font-size:11px;color:var(--muted)}
+.i-time{padding:8px 14px 10px;font-size:11px;color:var(--muted)}
 .i-add{display:flex;gap:8px;border-top:1px solid var(--border);padding:10px 14px}
 .i-add input{flex:1;border:none;background:transparent;color:var(--text);font-size:14px;outline:none}
 .i-add button{background:none;border:none;color:#3897f0;font-weight:700;cursor:pointer}
+/* Sidebar */
 .side{display:flex;flex-direction:column;gap:15px}
 .widget{background:var(--card);border-radius:15px;padding:18px;box-shadow:var(--shadow)}
 .wtitle{font-size:15px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border)}
@@ -74,9 +80,7 @@ header{background:var(--card);border-radius:20px;padding:40px 20px;margin:15px 0
 .wlist li:hover{color:var(--primary)}
 .nform input{width:100%;padding:10px;border:2px solid var(--border);border-radius:8px;margin-bottom:10px;background:var(--bg);color:var(--text)}
 .nform button{width:100%;padding:10px;background:var(--grad);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
-.loading,.empty{background:var(--card);padding:40px;border-radius:15px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}
-.spinner{width:40px;height:40px;border:4px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 15px}
-@keyframes sp{to{transform:rotate(360deg)}}
+/* Modal */
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;overflow-y:auto;padding:15px}
 .modal.open{display:block}
 .m-box{background:var(--card);max-width:750px;margin:30px auto;border-radius:20px;overflow:hidden;position:relative}
@@ -88,6 +92,7 @@ header{background:var(--card);border-radius:20px;padding:40px 20px;margin:15px 0
 .m-text{line-height:2;white-space:pre-wrap;color:var(--text)}
 .m-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;padding-top:15px;border-top:1px solid var(--border)}
 .abtn{padding:8px 14px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px}
+.abtn:hover{background:var(--primary);color:#fff}
 .cform{display:flex;flex-direction:column;gap:10px;margin:15px 0}
 .cform input,.cform textarea{padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit}
 .cform button{align-self:flex-start;padding:10px 20px;background:var(--grad);color:#fff;border:none;border-radius:8px;cursor:pointer}
@@ -95,8 +100,14 @@ header{background:var(--card);border-radius:20px;padding:40px 20px;margin:15px 0
 .cname{font-weight:700;color:var(--primary);font-size:13px}
 .cdate{font-size:11px;color:var(--muted)}
 .ctext{font-size:14px;margin-top:4px}
+/* Toast */
 .toasts{position:fixed;top:15px;left:15px;z-index:2000;display:flex;flex-direction:column;gap:8px}
-.toast{background:var(--card);color:var(--text);padding:12px 18px;border-radius:10px;box-shadow:var(--shadow);border-right:4px solid var(--primary);font-size:14px}
+.toast{background:var(--card);color:var(--text);padding:12px 18px;border-radius:10px;box-shadow:var(--shadow);border-right:4px solid var(--primary);font-size:14px;animation:slideIn .3s}
+@keyframes slideIn{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
+/* Loading */
+.loading,.empty{background:var(--card);padding:40px;border-radius:15px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}
+.spinner{width:40px;height:40px;border:4px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 15px}
+@keyframes sp{to{transform:rotate(360deg)}}
 footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 </style>
 </head>
@@ -181,95 +192,8 @@ var allPosts=[],currentFilter='all',currentSearch='',shown=0,currentPostId=null,
 var TYPE_LABELS={random:'عشوائي',book_summary:'ملخص كتاب',article:'مقال',story:'قصة',facts:'حقائق',tips:'نصائح',news:'خبر تقني',philosophy:'فلسفة',history:'تاريخ',science:'علوم',psychology:'علم نفس'};
 var TYPE_ICONS={random:'🎲',book_summary:'📚',article:'📝',story:'📖',facts:'💡',tips:'🎯',news:'📰',philosophy:'🤔',history:'🏛️',science:'🔬',psychology:'🧠'};
 var TYPE_IMAGES={random:'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=70&auto=format',book_summary:'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&q=70&auto=format',article:'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&q=70&auto=format',story:'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&q=70&auto=format',facts:'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&q=70&auto=format',tips:'https://images.unsplash.com/photo-1512314889357-e157c22f938d?w=600&q=70&auto=format',news:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=70&auto=format',philosophy:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=70&auto=format',history:'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=600&q=70&auto=format',science:'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&q=70&auto=format',psychology:'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=70&auto=format'};
-function $(id){return document.getElementById(id);}
-function setText(id,v){var e=$(id);if(e)e.textContent=v;}
-function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
-function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-function toast(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;var c=$('toasts');if(c)c.appendChild(t);setTimeout(function(){t.remove();},3000);}
-function tick(){var n=new Date();setText('liveTime',n.toLocaleTimeString('ar-SA',{hour12:false}));setText('liveDate',n.toLocaleDateString('ar-SA'));}
-tick();setInterval(tick,1000);
-function toggleTheme(){var d=document.documentElement.getAttribute('data-theme')==='dark';if(d){document.documentElement.removeAttribute('data-theme');setText('themeBtn','🌙');lsSet('theme','light');}else{document.documentElement.setAttribute('data-theme','dark');setText('themeBtn','☀️');lsSet('theme','dark');}}
-if(lsGet('theme','')==='dark'){document.documentElement.setAttribute('data-theme','dark');setText('themeBtn','☀️');}
-function setFont(s){document.body.style.fontSize=s+'px';lsSet('font',s);}
-var sf=lsGet('font','');if(sf)document.body.style.fontSize=sf+'px';
-function getViews(id){return parseInt(lsGet('v_'+id,'0'),10)||0;}
-function getLikes(id){return parseInt(lsGet('l_'+id,'0'),10)||0;}
-function isLiked(id){return lsGet('lk_'+id,'')==='1';}
-function isFav(id){try{return JSON.parse(lsGet('favs','[]')).indexOf(id)>-1;}catch(e){return false;}}
-function getComments(id){try{return JSON.parse(lsGet('c_'+id,'[]'));}catch(e){return [];}}
-function toggleLike(id){var l=getLikes(id);if(isLiked(id)){l=Math.max(0,l-1);try{localStorage.removeItem('lk_'+id);}catch(e){}}else{l++;lsSet('lk_'+id,'1');}lsSet('l_'+id,l);likeUI(id);}
-function likeUI(id){var card=document.querySelector('[data-card="'+id+'"]');if(!card)return;var b=card.querySelector('.like-btn');var c=card.querySelector('.like-cnt');if(b)b.textContent=isLiked(id)?'❤️':'🤍';if(c)c.textContent=getLikes(id)+' إعجاب';}
-function dblLike(id,el){if(!isLiked(id)){lsSet('l_'+id,getLikes(id)+1);lsSet('lk_'+id,'1');}var b=el.querySelector('.i-burst');if(b){b.classList.remove('show');void b.offsetWidth;b.classList.add('show');}setTimeout(function(){likeUI(id);},700);}
-function toggleFav(id){var f=[];try{f=JSON.parse(lsGet('favs','[]'));}catch(e){}var i=f.indexOf(id);if(i>-1){f.splice(i,1);toast('أزيل من المفضلة');}else{f.push(id);toast('⭐ أضيف للمفضلة');}lsSet('favs',JSON.stringify(f));}
-function scrollCats(d){var b=$('catsBar');if(b)b.scrollBy({left:d*250,behavior:'smooth'});}
-function selectCat(t){currentFilter=t;buildCats();shown=0;renderPosts(true);}
-function buildCats(){var b=$('catsBar');if(!b)return;var counts={};allPosts.forEach(function(p){var t=p.type||'random';counts[t]=(counts[t]||0)+1;});
-var h='<button class="chip'+(currentFilter==='all'?' active':'')+'" onclick="selectCat(\'all\')">🏠 الرئيسية <span class="cnt">'+allPosts.length+'</span></button>';
-Object.keys(TYPE_LABELS).forEach(function(t){var n=counts[t]||0;if(!n)return;h+='<button class="chip'+(currentFilter===t?' active':'')+'" onclick="selectCat(\''+t+'\')">'+TYPE_ICONS[t]+' '+TYPE_LABELS[t]+' <span class="cnt">'+n+'</span></button>';});
-b.innerHTML=h;}
-function filtered(){var list=allPosts;if(currentFilter!=='all')list=list.filter(function(p){return (p.type||'random')===currentFilter;});if(currentSearch){var q=currentSearch.toLowerCase();list=list.filter(function(p){return ((p.title||'')+(p.content||'')).toLowerCase().indexOf(q)>-1;});}return list;}
-function renderPosts(reset){var c=$('postsContainer');if(!c)return;var list=filtered();if(reset){c.innerHTML='';shown=0;}
-if(list.length===0&&reset){c.innerHTML='<div class="empty">📭 لا توجد منشورات</div>';return;}
-var batch=list.slice(shown,shown+BATCH);batch.forEach(function(p){c.appendChild(makeCard(p));});shown+=batch.length;
-if(shown<list.length){var l=document.createElement('div');l.className='loading';l.id='moreLoader';l.innerHTML='<div class="spinner"></div>جاري تحميل المزيد...';c.appendChild(l);}}
-function makeCard(p){var d=document.createElement('div');d.className='insta-card';d.setAttribute('data-card',p.id);
-var img=TYPE_IMAGES[p.type]||TYPE_IMAGES.random;var content=p.content||'';var prev=content.length>90?content.substring(0,90)+'... ':content;
-var tags=(p.hashtags||[]).slice(0,4);var cc=getComments(p.id).length;
-d.innerHTML='<div class="i-head"><div class="i-ring"><div class="i-av">'+(TYPE_ICONS[p.type]||'📄')+'</div></div><div class="i-user"><div class="i-name">alkinani</div><div class="i-loc">'+(TYPE_LABELS[p.type]||'')+' • '+(p.date||'')+'</div></div><button style="background:none;border:none;font-size:20px;cursor:pointer" onclick="openPost('+p.id+')">⋯</button></div>'+
-'<div class="i-img" ondblclick="dblLike('+p.id+',this)"><img src="'+img+'" alt="" loading="lazy"><div class="i-burst">❤️</div></div>'+
-'<div class="i-actions"><button class="like-btn" onclick="toggleLike('+p.id+')">'+(isLiked(p.id)?'❤️':'🤍')+'</button><button onclick="openPost('+p.id+')">💬</button><button onclick="shareTo(\'telegram\')">📤</button><button class="i-save" onclick="toggleFav('+p.id+')">'+(isFav(p.id)?'🔖':'️')+'</button></div>'+
-'<div class="i-likes"><strong class="like-cnt">'+getLikes(p.id)+' إعجاب</strong></div>'+
-'<div class="i-cap"><span class="i-name">alkinani</span><span class="i-title">'+(p.title||'')+'</span><span>'+prev+'</span>'+(content.length>90?'<button class="i-more" onclick="openPost('+p.id+')">المزيد</button>':'')+(tags.length?'<div class="i-tags">'+tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>':'')+'</div>'+
-'<div class="i-clink" onclick="openPost('+p.id+')">عرض جميع التعليقات ('+cc+')</div>'+
-'<div class="i-time">'+(p.date||'')+'</div>'+
-'<div class="i-add"><input type="text" placeholder="أضف تعليقاً..." onkeydown="if(event.key===\'Enter\')quickC('+p.id+',this)"><button onclick="quickC('+p.id+',this.previousElementSibling)">نشر</button></div>';
-return d;}
-function quickC(id,inp){var t=inp.value.trim();if(!t)return;var cs=getComments(id);cs.unshift({name:lsGet('userName','زائر'),text:t,date:new Date().toLocaleString('ar-SA')});lsSet('c_'+id,JSON.stringify(cs));inp.value='';toast('💬 تم إضافة التعليق');var card=document.querySelector('[data-card="'+id+'"]');if(card){var l=card.querySelector('.i-clink');if(l)l.textContent='عرض جميع التعليقات ('+cs.length+')';}}
-function openPost(id){var p=null;for(var i=0;i<allPosts.length;i++){if(allPosts[i].id===id){p=allPosts[i];break;}}if(!p)return;currentPostId=id;
-lsSet('v_'+id,getViews(id)+1);
-$('mImg').src=TYPE_IMAGES[p.type]||TYPE_IMAGES.random;$('mType').textContent=(TYPE_ICONS[p.type]||'')+' '+(TYPE_LABELS[p.type]||'');
-$('mTitle').textContent=p.title||'';$('mDate').textContent='🕐 '+(p.date||'');$('mRead').textContent='⏱️ '+Math.max(1,Math.ceil((p.content||'').length/200))+' دقيقة';$('mViews').textContent=getViews(id);$('mText').textContent=p.content||'';
-var tags=(p.hashtags||[]);$('mTags').innerHTML=tags.map(function(t){return '<span>'+t+'</span>';}).join('');
-loadComments(id);$('postModal').classList.add('open');document.body.style.overflow='hidden';}
-function closeModal(){$('postModal').classList.remove('open');document.body.style.overflow='';}
-$('postModal').addEventListener('click',function(e){if(e.target.id==='postModal')closeModal();});
-function loadComments(id){var cs=getComments(id);setText('cCount',cs.length);var c=$('cList');if(!c)return;
-if(!cs.length){c.innerHTML='<p style="color:var(--muted);text-align:center;padding:15px">كن أول من يعلّق!</p>';return;}
-c.innerHTML=cs.map(function(x){return '<div class="citem"><div class="cname">'+x.name+'</div><div class="cdate">'+x.date+'</div><div class="ctext">'+x.text+'</div></div>';}).join('');}
-function addComment(e){e.preventDefault();if(!currentPostId)return;var n=$('cName').value.trim(),t=$('cText').value.trim();if(!n||!t)return;var cs=getComments(currentPostId);cs.unshift({name:n,text:t,date:new Date().toLocaleString('ar-SA')});lsSet('c_'+currentPostId,JSON.stringify(cs));lsSet('userName',n);$('cName').value='';$('cText').value='';loadComments(currentPostId);widgets();toast('💬 تم إضافة التعليق');}
-function shareTo(pl){var p=null;for(var i=0;i<allPosts.length;i++){if(allPosts[i].id===currentPostId){p=allPosts[i];break;}}
-var title=p?(p.title||'alkinani'):'alkinani - مركز المحتوى الذكي';var url=encodeURIComponent(location.href);var tx=encodeURIComponent(title);
-var urls={whatsapp:'https://wa.me/?text='+tx+'%20'+url,telegram:'https://t.me/share/url?url='+url+'&text='+tx,twitter:'https://twitter.com/intent/tweet?text='+tx+'&url='+url,facebook:'https://www.facebook.com/sharer/sharer.php?u='+url};
-window.open(urls[pl],'_blank');}
-function copyText(){var p=null;for(var i=0;i<allPosts.length;i++){if(allPosts[i].id===currentPostId){p=allPosts[i];break;}}if(p&&navigator.clipboard){navigator.clipboard.writeText((p.title||'')+'\n\n'+(p.content||''));toast('📋 تم النسخ');}}
-function subscribe(e){e.preventDefault();toast('✅ تم الاشتراك!');e.target.reset();}
-function widgets(){var m=$('wMost');if(m){var s=allPosts.slice().sort(function(a,b){return getViews(b.id)-getViews(a.id);}).slice(0,5);
-m.innerHTML=s.length?s.map(function(p,i){return '<li onclick="openPost('+p.id+')">'+(i+1)+'. '+(p.title||'منشور')+' ('+getViews(p.id)+')</li>';}).join(''):'<li>لا يوجد</li>';}
-var wc=$('wComments');if(wc){var all=[];allPosts.forEach(function(p){getComments(p.id).forEach(function(x){all.push({x:x,pid:p.id});});});
-wc.innerHTML=all.length?all.slice(0,3).map(function(o){return '<li onclick="openPost('+o.pid+')"><strong>'+o.x.name+':</strong> '+o.x.text.substring(0,40)+'</li>';}).join(''):'<li>كن أول من يعلّق!</li>';}
-setText('sTotal',allPosts.length);var types={};allPosts.forEach(function(p){types[p.type||'random']=1;});setText('sTypes',Object.keys(types).length);
-var tv=0;allPosts.forEach(function(p){tv+=getViews(p.id);});setText('sViews',tv);}
-function loadAds(){fetch('ads.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(ads){var today=new Date().toISOString().split('T')[0];
-var ad=null;for(var i=0;i<ads.length;i++){var a=ads[i];if(a.active&&(!a.startDate||a.startDate<=today)&&(!a.endDate||a.endDate>=today)){ad=a;break;}}
-var h=$('heroSection');if(ad&&h){h.style.display='block';setText('heroTitle',ad.title);setText('heroDesc',ad.description);$('heroLink').href=ad.link||'#';}else if(h){h.style.display='none';}}).catch(function(){var h=$('heroSection');if(h)h.style.display='none';});}
-function loadPosts(){var cached=lsGet('postsCache','');if(cached){try{allPosts=JSON.parse(cached);renderAll();}catch(e){}}
-fetch('posts.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(posts){allPosts=posts;lsSet('postsCache',JSON.stringify(posts));renderAll();}).catch(function(){var c=$('postsContainer');if(c&&allPosts.length===0)c.innerHTML='<div class="empty">📭 تعذر التحميل</div>';});}
-function renderAll(){buildCats();shown=0;renderPosts(true);widgets();var d=allPosts[0]&&allPosts[0].date?allPosts[0].date:'-';setText('lastUpdate',d);}
-$('searchBox').addEventListener('input',function(e){currentSearch=e.target.value;shown=0;renderPosts(true);});
-var obs=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){var l=$('moreLoader');if(l){l.remove();renderPosts(false);}}});},{threshold:0.1});
-setInterval(function(){var l=$('moreLoader');if(l)obs.observe(l);},500);
-loadPosts();loadAds();
-</script>
 
-<style>
-.i-actions{gap:8px!important}
-.i-actions button{color:var(--text);display:flex;align-items:center}
-.i-actions svg{width:26px;height:26px}
-.i-cnt{font-size:13px;font-weight:700;color:var(--text)}
-.i-cap .i-name{margin-left:5px}
-</style>
-<script>
-// ========== REAL INSTAGRAM UPGRADE ==========
+// SVG Icons
 var HEART_O='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 var HEART_F='<svg viewBox="0 0 24 24" fill="#ed4956" stroke="#ed4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
 var IC_COMMENT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
@@ -278,17 +202,44 @@ var IC_SEND='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 var IC_BOOK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
 var BOOK_F='<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
 
+function $(id){return document.getElementById(id);}
+function setText(id,v){var e=$(id);if(e)e.textContent=v;}
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function toast(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;var c=$('toasts');if(c)c.appendChild(t);setTimeout(function(){t.remove();},3000);}
 function fmtNum(n){n=n||0;if(n>=1000000)return (n/1000000).toLocaleString('ar-EG',{maximumFractionDigits:1})+' مليون';if(n>=1000)return (n/1000).toLocaleString('ar-EG',{maximumFractionDigits:1})+' ألف';return n.toLocaleString('ar-EG');}
 function relTime(ds){try{var d=new Date(String(ds).replace(' ','T'));var s=(Date.now()-d.getTime())/1000;if(isNaN(s)||s<0)return ds||'';if(s<60)return 'الآن';if(s<3600)return 'منذ '+Math.floor(s/60)+' دقيقة';if(s<86400)return 'منذ '+Math.floor(s/3600)+' ساعة';var days=Math.floor(s/86400);if(days===1)return 'منذ يوم';if(days===2)return 'منذ يومين';if(days<=10)return 'منذ '+days+' أيام';return 'منذ '+days+' يوماً';}catch(e){return ds||'';}}
-function findPost(id){for(var i=0;i<allPosts.length;i++){if(allPosts[i].id===id)return allPosts[i];}return null;}
+function tick(){var n=new Date();setText('liveTime',n.toLocaleTimeString('ar-SA',{hour12:false}));setText('liveDate',n.toLocaleDateString('ar-SA'));}
+tick();setInterval(tick,1000);
+function toggleTheme(){var d=document.documentElement.getAttribute('data-theme')==='dark';if(d){document.documentElement.removeAttribute('data-theme');$('themeBtn').textContent='🌙';lsSet('theme','light');}else{document.documentElement.setAttribute('data-theme','dark');$('themeBtn').textContent='☀️';lsSet('theme','dark');}}
+if(lsGet('theme','')==='dark'){document.documentElement.setAttribute('data-theme','dark');$('themeBtn').textContent='☀️';}
+function setFont(s){document.body.style.fontSize=s+'px';lsSet('font',s);}
+var sf=lsGet('font','');if(sf)document.body.style.fontSize=sf+'px';
+function getViews(id){return parseInt(lsGet('v_'+id,'0'),10)||0;}
+function getLikes(id){return parseInt(lsGet('l_'+id,'0'),10)||0;}
+function isLiked(id){return lsGet('lk_'+id,'')==='1';}
+function isFav(id){try{return JSON.parse(lsGet('favs','[]')).indexOf(id)>-1;}catch(e){return false;}}
+function getComments(id){try{return JSON.parse(lsGet('c_'+id,'[]'));}catch(e){return [];}}
 function getShares(id){return parseInt(lsGet('sh_'+id,'0'),10)||0;}
+function toggleLike(id){var l=getLikes(id);if(isLiked(id)){l=Math.max(0,l-1);try{localStorage.removeItem('lk_'+id);}catch(e){}}else{l++;lsSet('lk_'+id,'1');}lsSet('l_'+id,l);likeUI(id);}
+function dblLike(id,el){if(!isLiked(id)){lsSet('l_'+id,getLikes(id)+1);lsSet('lk_'+id,'1');}var b=el.querySelector('.i-burst');if(b){b.classList.remove('show');void b.offsetWidth;b.classList.add('show');}setTimeout(function(){likeUI(id);},700);}
+function likeUI(id){var card=document.querySelector('[data-card="'+id+'"]');if(!card)return;var b=card.querySelector('.like-btn');var c=card.querySelector('.like-cnt');if(b)b.innerHTML=isLiked(id)?HEART_F:HEART_O;if(c)c.textContent=fmtNum(getLikes(id));}
+function toggleFav(id){var f=[];try{f=JSON.parse(lsGet('favs','[]'));}catch(e){}var i=f.indexOf(id);if(i>-1){f.splice(i,1);toast('أزيل من المحفوظات');}else{f.push(id);toast('🔖 تم الحفظ');}lsSet('favs',JSON.stringify(f));favUI(id);}
+function favUI(id){var card=document.querySelector('[data-card="'+id+'"]');if(!card)return;var b=card.querySelector('.save-btn');if(b)b.innerHTML=isFav(id)?BOOK_F:IC_BOOK;}
 function bumpShares(id){lsSet('sh_'+id,getShares(id)+1);var card=document.querySelector('[data-card="'+id+'"]');if(card){var els=card.querySelectorAll('.sh-cnt');for(var i=0;i<els.length;i++)els[i].textContent=fmtNum(getShares(id));}}
 function repostCard(id){bumpShares(id);toast('🔁 تم إعادة النشر');}
-function sendCard(id){bumpShares(id);var p=findPost(id);var tx=encodeURIComponent(p?(p.title||'alkinani'):'alkinani');var url=encodeURIComponent(location.href);window.open('https://t.me/share/url?url='+url+'&text='+tx,'_blank');}
-function favUI(id){var card=document.querySelector('[data-card="'+id+'"]');if(!card)return;var b=card.querySelector('.save-btn');if(b)b.innerHTML=isFav(id)?BOOK_F:IC_BOOK;}
-function toggleFav(id){var f=[];try{f=JSON.parse(lsGet('favs','[]'));}catch(e){}var i=f.indexOf(id);if(i>-1){f.splice(i,1);toast('أزيل من المحفوظات');}else{f.push(id);toast('🔖 تم الحفظ');}lsSet('favs',JSON.stringify(f));favUI(id);}
-function likeUI(id){var card=document.querySelector('[data-card="'+id+'"]');if(!card)return;var b=card.querySelector('.like-btn');var c=card.querySelector('.like-cnt');if(b)b.innerHTML=isLiked(id)?HEART_F:HEART_O;if(c)c.textContent=fmtNum(getLikes(id));}
-
+function sendCard(id){bumpShares(id);var p=allPosts.find(function(x){return x.id===id;});var tx=encodeURIComponent(p?(p.title||'alkinani'):'alkinani');var url=encodeURIComponent(location.href);window.open('https://t.me/share/url?url='+url+'&text='+tx,'_blank');}
+function scrollCats(d){var b=$('catsBar');if(b)b.scrollBy({left:d*250,behavior:'smooth'});}
+function selectCat(t){currentFilter=t;buildCats();shown=0;renderPosts(true);}
+function buildCats(){var b=$('catsBar');if(!b)return;var counts={};allPosts.forEach(function(p){var t=p.type||'random';counts[t]=(counts[t]||0)+1;});
+var h='<button class="chip'+(currentFilter==='all'?' active':'')+'" onclick="selectCat(\'all\')">🏠 الرئيسية <span class="cnt">'+allPosts.length+'</span></button>';
+Object.keys(TYPE_LABELS).forEach(function(t){var n=counts[t]||0;if(!n)return;h+='<button class="chip'+(currentFilter===t?' active':'')+'" onclick="selectCat(\''+t+'\')">'+TYPE_ICONS[t]+' '+TYPE_LABELS[t]+' <span class="cnt">'+n+'</span></button>';});
+b.innerHTML=h;}
+function filtered(){var list=allPosts;if(currentFilter!=='all')list=list.filter(function(p){return(p.type||'random')===currentFilter;});if(currentSearch){var q=currentSearch.toLowerCase();list=list.filter(function(p){return((p.title||'')+(p.content||'')).toLowerCase().indexOf(q)>-1;});}return list;}
+function renderPosts(reset){var c=$('postsContainer');if(!c)return;var list=filtered();if(reset){c.innerHTML='';shown=0;}
+if(list.length===0&&reset){c.innerHTML='<div class="empty">📭 لا توجد منشورات</div>';return;}
+var batch=list.slice(shown,shown+BATCH);batch.forEach(function(p){c.appendChild(makeCard(p));});shown+=batch.length;
+if(shown<list.length){var l=document.createElement('div');l.className='loading';l.id='moreLoader';l.innerHTML='<div class="spinner"></div>جاري تحميل المزيد...';c.appendChild(l);}}
 function makeCard(p){var d=document.createElement('div');d.className='insta-card';d.setAttribute('data-card',p.id);
 var img=TYPE_IMAGES[p.type]||TYPE_IMAGES.random;var content=p.content||'';var prev=content.length>90?content.substring(0,90)+'... ':content;
 var tags=(p.hashtags||[]).slice(0,4);var cc=getComments(p.id).length;var sh=getShares(p.id);var lk=getLikes(p.id);
@@ -302,9 +253,41 @@ d.innerHTML='<div class="i-head"><div class="i-ring"><div class="i-av">'+(TYPE_I
 '<button class="i-save save-btn" onclick="toggleFav('+p.id+')">'+(isFav(p.id)?BOOK_F:IC_BOOK)+'</button>'+
 '</div>'+
 '<div class="i-cap"><span class="i-name">alkinani</span> ✨ <strong style="color:var(--text)">'+(p.title||'')+'</strong> '+prev+(content.length>90?'<button class="i-more" onclick="openPost('+p.id+')">... المزيد</button>':'')+(tags.length?'<div class="i-tags">'+tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>':'')+'</div>'+
-'<div class="i-add"><input type="text" placeholder="أضف تعليقاً..." onkeydown="if(event.key==='Enter')quickC('+p.id+',this)"><button onclick="quickC('+p.id+',this.previousElementSibling)">نشر</button></div>'+
+'<div class="i-add"><input type="text" placeholder="أضف تعليقاً..." onkeydown="if(event.key===\'Enter\')quickC('+p.id+',this)"><button onclick="quickC('+p.id+',this.previousElementSibling)">نشر</button></div>'+
 '<div class="i-time">'+relTime(p.date)+' • تم الإنشاء بالذكاء الاصطناعي ✨</div>';
 return d;}
+function quickC(id,inp){var t=inp.value.trim();if(!t)return;var cs=getComments(id);cs.unshift({name:lsGet('userName','زائر'),text:t,date:new Date().toLocaleString('ar-SA')});lsSet('c_'+id,JSON.stringify(cs));inp.value='';toast('💬 تم إضافة التعليق');var card=document.querySelector('[data-card="'+id+'"]');if(card){var l=card.querySelector('.i-clink');if(l)l.textContent='عرض جميع التعليقات ('+cs.length+')';}}
+function openPost(id){var p=allPosts.find(function(x){return x.id===id;});if(!p)return;currentPostId=id;
+lsSet('v_'+id,getViews(id)+1);
+$('mImg').src=TYPE_IMAGES[p.type]||TYPE_IMAGES.random;$('mType').textContent=(TYPE_ICONS[p.type]||'')+' '+(TYPE_LABELS[p.type]||'');
+$('mTitle').textContent=p.title||'';$('mDate').textContent='🕐 '+(p.date||'');$('mRead').textContent='⏱️ '+Math.max(1,Math.ceil((p.content||'').length/200))+' دقيقة';$('mViews').textContent=getViews(id);$('mText').textContent=p.content||'';
+var tags=(p.hashtags||[]);$('mTags').innerHTML=tags.map(function(t){return '<span>'+t+'</span>';}).join('');
+loadComments(id);$('postModal').classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){$('postModal').classList.remove('open');document.body.style.overflow='';}
+$('postModal').addEventListener('click',function(e){if(e.target.id==='postModal')closeModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+function loadComments(id){var cs=getComments(id);setText('cCount',cs.length);var c=$('cList');if(!c)return;
+if(!cs.length){c.innerHTML='<p style="color:var(--muted);text-align:center;padding:15px">كن أول من يعلّق!</p>';return;}
+c.innerHTML=cs.map(function(x){return '<div class="citem"><div class="cname">'+x.name+'</div><div class="cdate">'+x.date+'</div><div class="ctext">'+x.text+'</div></div>';}).join('');}
+function addComment(e){e.preventDefault();if(!currentPostId)return;var n=$('cName').value.trim(),t=$('cText').value.trim();if(!n||!t)return;var cs=getComments(currentPostId);cs.unshift({name:n,text:t,date:new Date().toLocaleString('ar-SA')});lsSet('c_'+currentPostId,JSON.stringify(cs));lsSet('userName',n);$('cName').value='';$('cText').value='';loadComments(currentPostId);widgets();toast('💬 تم إضافة التعليق');}
+function shareTo(pl){var p=allPosts.find(function(x){return x.id===currentPostId;});var title=p?(p.title||'alkinani'):'alkinani';var url=encodeURIComponent(location.href);var tx=encodeURIComponent(title);
+var urls={whatsapp:'https://wa.me/?text='+tx+'%20'+url,telegram:'https://t.me/share/url?url='+url+'&text='+tx,twitter:'https://twitter.com/intent/tweet?text='+tx+'&url='+url,facebook:'https://www.facebook.com/sharer/sharer.php?u='+url};
+window.open(urls[pl],'_blank');}
+function copyText(){var p=allPosts.find(function(x){return x.id===currentPostId;});if(p&&navigator.clipboard){navigator.clipboard.writeText((p.title||'')+'\n\n'+(p.content||''));toast('📋 تم النسخ');}}
+function subscribe(e){e.preventDefault();toast('✅ تم الاشتراك!');e.target.reset();}
+function widgets(){var m=$('wMost');if(m){var s=allPosts.slice().sort(function(a,b){return getViews(b.id)-getViews(a.id);}).slice(0,5);m.innerHTML=s.length?s.map(function(p,i){return '<li onclick="openPost('+p.id+')">'+(i+1)+'. '+(p.title||'منشور')+' ('+getViews(p.id)+')</li>';}).join(''):'<li>لا يوجد</li>';}
+var wc=$('wComments');if(wc){var all=[];allPosts.forEach(function(p){getComments(p.id).forEach(function(x){all.push({x:x,pid:p.id});});});wc.innerHTML=all.length?all.slice(0,3).map(function(o){return '<li onclick="openPost('+o.pid+')"><strong>'+o.x.name+':</strong> '+o.x.text.substring(0,40)+'</li>';}).join(''):'<li>كن أول من يعلّق!</li>';}
+setText('sTotal',allPosts.length);var types={};allPosts.forEach(function(p){types[p.type||'random']=1;});setText('sTypes',Object.keys(types).length);
+var tv=0;allPosts.forEach(function(p){tv+=getViews(p.id);});setText('sViews',tv);}
+function loadAds(){fetch('ads.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(ads){var today=new Date().toISOString().split('T')[0];var ad=null;for(var i=0;i<ads.length;i++){var a=ads[i];if(a.active&&(!a.startDate||a.startDate<=today)&&(!a.endDate||a.endDate>=today)){ad=a;break;}}
+var h=$('heroSection');if(ad&&h){h.style.display='block';setText('heroTitle',ad.title);setText('heroDesc',ad.description);$('heroLink').href=ad.link||'#';}else if(h){h.style.display='none';}}).catch(function(){var h=$('heroSection');if(h)h.style.display='none';});}
+function loadPosts(){var cached=lsGet('postsCache','');if(cached){try{allPosts=JSON.parse(cached);renderAll();}catch(e){}}
+fetch('posts.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(posts){allPosts=posts;lsSet('postsCache',JSON.stringify(posts));renderAll();}).catch(function(){var c=$('postsContainer');if(c&&allPosts.length===0)c.innerHTML='<div class="empty">📭 تعذر التحميل</div>';});}
+function renderAll(){buildCats();shown=0;renderPosts(true);widgets();var d=allPosts[0]&&allPosts[0].date?allPosts[0].date:'-';setText('lastUpdate',d);}
+$('searchBox').addEventListener('input',function(e){currentSearch=e.target.value;shown=0;renderPosts(true);});
+var obs=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){var l=$('moreLoader');if(l){l.remove();renderPosts(false);}}});},{threshold:0.1});
+setInterval(function(){var l=$('moreLoader');if(l)obs.observe(l);},500);
+loadPosts();loadAds();
 </script>
 </body>
 </html>
