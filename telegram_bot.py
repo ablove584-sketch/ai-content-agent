@@ -7,7 +7,7 @@ import json
 # ==================== الإعدادات ====================
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
-GITHUB_TOKEN = os.getenv("GITHUB_TRIGGER_TOKEN")
+GITHUB_TOKEN = os.getenv("TRIGGER_TOKEN")  # ✅ استخدمنا TRIGGER_TOKEN
 GITHUB_USERNAME = "ablove584-sketch"
 REPO_NAME = "ai-content-agent"
 WORKFLOW_FILE = "content-agent.yml"
@@ -72,7 +72,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         if content_type == "book_summary":
             await query.edit_message_text(
-                "📚 اخترت: ملخص كتاب\n\n"
+                " اخترت: ملخص كتاب\n\n"
                 "أدخل اسم الكتاب الذي تريد تلخيصه:\n"
                 "(مثال: العادات الذرية، فن اللامبالاة)"
             )
@@ -80,7 +80,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         elif content_type == "random":
             # نشر عشوائي مباشرة
-            await query.edit_message_text(" جاري نشر محتوى عشوائي...")
+            await query.edit_message_text("🔄 جاري نشر محتوى عشوائي...")
             await trigger_workflow(user_data[user_id])
             await query.message.reply_text("✅ تم تشغيل عملية النشر!")
             return ConversationHandler.END
@@ -102,7 +102,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.effective_user.id
         if query.data == "topic_general":
             user_data[user_id]["topic"] = "عام"
-            await query.edit_message_text(" موضوع عام\n\nجاري النشر...")
+            await query.edit_message_text("📝 موضوع عام\n\n🔄 جاري النشر...")
         else:
             await query.edit_message_text(
                 "✏️ أدخل الموضوع المحدد:\n"
@@ -124,7 +124,7 @@ async def enter_book(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await update.message.reply_text(
         f" الكتاب: {book_name}\n\n"
-        "جاري توليد الملخص ونشره..."
+        "🔄 جاري توليد الملخص ونشره..."
     )
     
     await trigger_workflow(user_data[user_id])
@@ -140,7 +140,7 @@ async def enter_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await update.message.reply_text(
         f"📝 الموضوع: {topic}\n\n"
-        "جاري توليد المحتوى ونشره..."
+        " جاري توليد المحتوى ونشره..."
     )
     
     await trigger_workflow(user_data[user_id])
@@ -210,7 +210,7 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
             await update.message.reply_text(status_msg)
         else:
-            await update.message.reply_text(f" فشل: {response.status_code}")
+            await update.message.reply_text(f"❌ فشل: {response.status_code}")
             
     except Exception as e:
         await update.message.reply_text(f"❌ خطأ: {str(e)}")
@@ -218,22 +218,22 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """أمر /help"""
     await update.message.reply_text(
-        " المساعدة:\n\n"
+        "📖 المساعدة:\n\n"
         "/start - بدء النشر التفاعلي\n"
         "/status - حالة العمليات\n"
         "/help - هذه الرسالة\n\n"
         "أنواع المحتوى:\n"
         "📚 ملخص كتاب\n"
-        " مقال\n"
+        "📝 مقال\n"
         "📖 قصة\n"
         "💡 حقائق\n"
         "🎯 نصائح\n"
         "📰 خبر تقني\n"
-        " فلسفة\n"
+        "🤔 فلسفة\n"
         "🏛️ تاريخ\n"
         "🔬 علوم\n"
-        "🧠 علم نفس\n"
-        "🎲 عشوائي"
+        " علم نفس\n"
+        " عشوائي"
     )
 
 def main():
