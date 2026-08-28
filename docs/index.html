@@ -3,190 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Content Agent 🤖</title>
+    <title>منشوراتي 📚</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
         .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        header {
             background: white;
             border-radius: 20px;
-            padding: 40px;
-            max-width: 600px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
         }
-        h1 { color: #667eea; margin-bottom: 10px; text-align: center; }
-        .subtitle { color: #666; text-align: center; margin-bottom: 30px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; }
-        select, input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
+        h1 { color: #667eea; margin-bottom: 10px; }
+        .subtitle { color: #666; }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
-        select:focus, input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        button {
-            width: 100%;
-            padding: 15px;
+        .stat-box {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
         }
-        button:hover { transform: translateY(-2px); }
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
+        .stat-number { font-size: 24px; font-weight: bold; }
+        .stat-label { font-size: 12px; opacity: 0.9; }
+        
+        .post-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
         }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
-        .loading { text-align: center; color: #667eea; }
-        .info {
+        .post-card:hover { transform: translateY(-5px); }
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .post-type {
             background: #e7f3ff;
             color: #0066cc;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            border-right: 4px solid #0066cc;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .post-date {
+            color: #999;
+            font-size: 12px;
+        }
+        .post-title {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .post-content {
+            color: #666;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+        .post-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .post-link:hover { text-decoration: underline; }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .empty {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🤖 AI Content Agent</h1>
-        <p class="subtitle">نظام نشر المحتوى التلقائي</p>
-        
-        <div class="info">
-            💡 املأ النموذج وسيتم تشغيل GitHub Actions لنشر المحتوى تلقائياً.
-        </div>
-        
-        <form id="publishForm">
-            <div class="form-group">
-                <label for="contentType">نوع المحتوى:</label>
-                <select id="contentType" required>
-                    <option value="random">🎲 عشوائي</option>
-                    <option value="book_summary">📚 ملخص كتاب</option>
-                    <option value="article">📝 مقال</option>
-                    <option value="story">📖 قصة</option>
-                    <option value="facts">💡 حقائق</option>
-                    <option value="tips"> نصائح</option>
-                    <option value="news">📰 خبر تقني</option>
-                    <option value="philosophy">🤔 فلسفة</option>
-                    <option value="history">🏛️ تاريخ</option>
-                    <option value="science">🔬 علوم</option>
-                    <option value="psychology"> علم نفس</option>
-                </select>
+        <header>
+            <h1>📚 منشوراتي</h1>
+            <p class="subtitle">منشورات يتم توليدها ونشرها تلقائياً بالذكاء الاصطناعي</p>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalPosts">0</div>
+                    <div class="stat-label">إجمالي المنشورات</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="lastUpdate">-</div>
+                    <div class="stat-label">آخر تحديث</div>
+                </div>
             </div>
-            
-            <div class="form-group" id="bookGroup" style="display:none;">
-                <label for="bookName">اسم الكتاب:</label>
-                <input type="text" id="bookName" placeholder="مثال: العادات الذرية">
-            </div>
-            
-            <div class="form-group" id="topicGroup" style="display:none;">
-                <label for="customTopic">موضوع مخصص:</label>
-                <input type="text" id="customTopic" placeholder="أدخل الموضوع...">
-            </div>
-            
-            <button type="submit" id="submitBtn">🚀 تشغيل النشر</button>
-        </form>
+        </header>
         
-        <div id="result" class="result"></div>
-        
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
-            <p style="text-align: center; color: #999; font-size: 12px;">
-                🔒 هذه الصفحة خاصة - استخدمها بحذر
-            </p>
+        <div id="postsContainer">
+            <div class="loading">⏳ جاري تحميل المنشورات...</div>
         </div>
     </div>
 
     <script>
-        const contentType = document.getElementById('contentType');
-        const bookGroup = document.getElementById('bookGroup');
-        const topicGroup = document.getElementById('topicGroup');
+        const TYPE_LABELS = {
+            'random': '🎲 عشوائي',
+            'book_summary': '📚 ملخص كتاب',
+            'article': '📝 مقال',
+            'story': '📖 قصة',
+            'facts': '💡 حقائق',
+            'tips': '🎯 نصائح',
+            'news': '📰 خبر تقني',
+            'philosophy': '🤔 فلسفة',
+            'history': '🏛️ تاريخ',
+            'science': '🔬 علوم',
+            'psychology': '🧠 علم نفس'
+        };
         
-        contentType.addEventListener('change', function() {
-            bookGroup.style.display = this.value === 'book_summary' ? 'block' : 'none';
-            topicGroup.style.display = 
-                (this.value !== 'random' && this.value !== 'book_summary') ? 'block' : 'none';
-        });
-        
-        document.getElementById('publishForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const resultDiv = document.getElementById('result');
-            const submitBtn = document.getElementById('submitBtn');
-            
-            submitBtn.disabled = true;
-            resultDiv.className = 'result loading';
-            resultDiv.style.display = 'block';
-            resultDiv.innerHTML = '⏳ جاري تشغيل GitHub Actions...';
-            
-            const data = {
-                content_type: contentType.value,
-                book_name: document.getElementById('bookName').value,
-                custom_topic: document.getElementById('customTopic').value
-            };
+        async function loadPosts() {
+            const container = document.getElementById('postsContainer');
             
             try {
-                const response = await fetch('https://api.github.com/repos/ablove584-sketch/ai-content-agent/actions/workflows/content-agent.yml/dispatches', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        ref: 'main',
-                        inputs: data
-                    })
-                });
+                // إضافة timestamp لمنع الكاش
+                const response = await fetch('posts.json?t=' + Date.now());
                 
-                if (response.status === 204) {
-                    resultDiv.className = 'result success';
-                    resultDiv.innerHTML = `
-                        ✅ تم تشغيل عملية النشر بنجاح!<br><br>
-                        <strong>النوع:</strong> ${contentType.value}<br>
-                        ${data.book_name ? `<strong>الكتاب:</strong> ${data.book_name}<br>` : ''}
-                        ${data.custom_topic ? `<strong>الموضوع:</strong> ${data.custom_topic}<br>` : ''}
-                        <br>سيتم النشر خلال 2-5 دقائق.<br><br>
-                        <a href="https://github.com/ablove584-sketch/ai-content-agent/actions" target="_blank" style="color: #667eea;">
-                            متابعة التقدم في GitHub Actions →
-                        </a>
-                    `;
-                    document.getElementById('publishForm').reset();
-                    bookGroup.style.display = 'none';
-                    topicGroup.style.display = 'none';
-                } else {
-                    resultDiv.className = 'result error';
-                    resultDiv.innerHTML = '❌ فشل التشغيل. تأكد من أنك مسجل دخول في GitHub.';
+                if (!response.ok) {
+                    throw new Error('فشل تحميل المنشورات');
                 }
+                
+                const posts = await response.json();
+                
+                // تحديث الإحصائيات
+                document.getElementById('totalPosts').textContent = posts.length;
+                if (posts.length > 0) {
+                    document.getElementById('lastUpdate').textContent = posts[0].date.split(' ')[0];
+                }
+                
+                if (posts.length === 0) {
+                    container.innerHTML = '<div class="empty">📭 لا توجد منشورات بعد</div>';
+                    return;
+                }
+                
+                // عرض المنشورات
+                container.innerHTML = posts.map(post => `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <span class="post-type">${TYPE_LABELS[post.type] || post.type}</span>
+                            <span class="post-date">📅 ${post.date}</span>
+                        </div>
+                        <h2 class="post-title">${post.title}</h2>
+                        <p class="post-content">${post.content}</p>
+                        ${post.url && post.url !== '#' ? `<a href="${post.url}" class="post-link" target="_blank">عرض التفاصيل ←</a>` : ''}
+                    </div>
+                `).join('');
+                
             } catch (error) {
-                resultDiv.className = 'result error';
-                resultDiv.innerHTML = `❌ خطأ: ${error.message}`;
-            } finally {
-                submitBtn.disabled = false;
+                container.innerHTML = `<div class="error">❌ خطأ: ${error.message}</div>`;
             }
-        });
+        }
+        
+        // تحميل المنشورات عند فتح الصفحة
+        loadPosts();
+        
+        // تحديث تلقائي كل 5 دقائق
+        setInterval(loadPosts, 5 * 60 * 1000);
     </script>
 </body>
 </html>
