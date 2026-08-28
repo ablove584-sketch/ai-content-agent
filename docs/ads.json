@@ -5,7 +5,7 @@
     "description": "هذا إعلان تجريبي - يمكنك تعديله أو حذفه",
     "image": "https://via.placeholder.com/800x300/667eea/ffffff?text=Advertisement",
     "link": "https://example.com",
-    "active": true,
+    "active": false,
     "startDate": "2026-08-28",
     "endDate": "2026-12-31"
   }
