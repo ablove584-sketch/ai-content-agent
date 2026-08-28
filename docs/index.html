@@ -759,6 +759,17 @@
     </div>
     
     <script>
+        // ========== NULL SAFETY (منع أخطاء العناصر المفقودة) ==========
+        (function() {
+            const orig = document.getElementById.bind(document);
+            document.getElementById = function(id) {
+                const el = orig(id);
+                if (el) return el;
+                // عنصر مفقود؟ نرجعن عنصر وهمي لمنع توقف الكود
+                return document.createElement('div');
+            };
+        })();
+
         const TYPE_LABELS = {
             'random': ' عشوائي', 'book_summary': ' ملخص كتاب', 'article': '📝 مقال',
             'story': '📖 قصة', 'facts': '💡 حقائق', 'tips': '🎯 نصائح',
