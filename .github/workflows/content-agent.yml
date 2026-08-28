@@ -10,18 +10,7 @@ on:
         required: false
         default: 'random'
         type: choice
-        options:
-          - random
-          - book_summary
-          - article
-          - story
-          - facts
-          - tips
-          - news
-          - philosophy
-          - history
-          - science
-          - psychology
+        options: [random, book_summary, article, story, facts, tips, news, philosophy, history, science, psychology]
       book_name:
         description: 'اسم الكتاب'
         required: false
@@ -39,7 +28,6 @@ permissions:
 jobs:
   run-content-agent:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -65,7 +53,6 @@ jobs:
           CONTENT_TYPE: ${{ github.event.inputs.content_type || 'random' }}
           BOOK_NAME: ${{ github.event.inputs.book_name || '' }}
           CUSTOM_TOPIC: ${{ github.event.inputs.custom_topic || '' }}
-          SAVE_TO_JSON: 'true'
         run: |
           python main.py
           echo "workflow_id=${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
@@ -73,78 +60,55 @@ jobs:
       - name: Save post to JSON
         run: |
           python3 << 'PYEOF'
-          import json
-          import os
+          import json, os, re
           from datetime import datetime
-          
+
+          def detect_type(title, content, tags):
+              t = title + ' ' + content + ' ' + ' '.join(tags)
+              if re.search(r'فلسف|وجود|ماهية|أخلاقي|منطق|سقراط|أرسطو|كانط|هوية|ثيسيوس|مفارقة', t): return 'philosophy'
+              if re.search(r'قصة|حكاية|رواية|بطل|حلم|استيقظ|عجوز|طفل', t): return 'story'
+              if re.search(r'فيزياء|كيمياء|فضاء|كوكب|ذرة|بيولوج|دماغ|أينشتاين|نظرية|علم', t): return 'science'
+              if re.search(r'تاريخ|حضارة|فرعون|رومان|أندلس|خلافة|إمبراطورية|آثار', t): return 'history'
+              if re.search(r'نفس|سلوك|عادة|قلق|توتر|ثقة|عاطفي|عقلية', t): return 'psychology'
+              if re.search(r'كتاب|مؤلف|ملخص|قراءة|فصل', t): return 'book_summary'
+              if re.search(r'تقنية|برمج|ذكاء اصطناعي|خوارزم|بيانات|رقمي|إنترنت', t): return 'news'
+              if re.search(r'نصيح|خطوة|طريقة|مهارة|إنتاجية', t): return 'tips'
+              if re.search(r'حقيقة|معلومة|هل تعلم|غريب', t): return 'facts'
+              return 'article'
+
           posts_file = 'docs/posts.json'
-          
-          # تحميل المنشورات الموجودة
+          posts = []
           if os.path.exists(posts_file):
               try:
                   with open(posts_file, 'r', encoding='utf-8') as f:
                       posts = json.load(f)
-              except:
-                  posts = []
-          else:
-              posts = []
-          
-          # قراءة البيانات من البيئة
-          content_type = os.getenv("CONTENT_TYPE", "random")
-          workflow_id = os.getenv("WORKFLOW_ID", "unknown")
-          
-          # قراءة المنشور من قاعدة البيانات
+              except: posts = []
+
           db_path = 'data/content.db'
-          title = "منشور جديد"
-          content = "تم إنشاء محتوى جديد بنجاح"
-          topic = ""
-          angle = ""
-          core_idea = ""
-          keywords = []
-          hashtags = []
-          
+          title, content, topic, angle, core_idea = 'منشور جديد', 'تم إنشاء محتوى جديد', '', '', ''
+          keywords, hashtags = [], []
+
           if os.path.exists(db_path):
               import sqlite3
               conn = sqlite3.connect(db_path)
               conn.row_factory = sqlite3.Row
-              cursor = conn.cursor()
-              
-              # جلب آخر منشور
-              cursor.execute('''
-                  SELECT title, content, topic, angle, core_idea, keywords, hashtags 
-                  FROM posts 
-                  ORDER BY id DESC 
-                  LIMIT 1
-              ''')
-              
-              row = cursor.fetchone()
+              cur = conn.cursor()
+              cur.execute('SELECT title, content, topic, angle, core_idea, keywords, hashtags FROM posts ORDER BY id DESC LIMIT 1')
+              row = cur.fetchone()
               if row:
                   title = row['title'] or title
                   content = row['content'] or content
-                  topic = row['topic'] or topic
-                  angle = row['angle'] or angle
-                  core_idea = row['core_idea'] or core_idea
-                  
-                  # إصلاح: التحقق من النص الفارغ قبل json.loads
+                  topic = row['topic'] or ''
+                  angle = row['angle'] or ''
+                  core_idea = row['core_idea'] or ''
                   if row['keywords'] and row['keywords'].strip():
-                      try:
-                          keywords = json.loads(row['keywords'])
-                      except:
-                          keywords = []
-                  else:
-                      keywords = []
-                  
+                      try: keywords = json.loads(row['keywords'])
+                      except: keywords = []
                   if row['hashtags'] and row['hashtags'].strip():
-                      try:
-                          hashtags = json.loads(row['hashtags'])
-                      except:
-                          hashtags = []
-                  else:
-                      hashtags = []
-              
+                      try: hashtags = json.loads(row['hashtags'])
+                      except: hashtags = []
               conn.close()
-          
-          # إنشاء منشور جديد
+
           new_post = {
               "id": len(posts) + 1,
               "title": title,
@@ -154,28 +118,19 @@ jobs:
               "core_idea": core_idea,
               "keywords": keywords,
               "hashtags": hashtags,
-              "type": content_type,
+              "type": detect_type(title, content, hashtags),
               "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-              "url": f"https://github.com/{os.getenv('GITHUB_REPOSITORY')}/actions/runs/{workflow_id}",
+              "url": f"https://github.com/{os.getenv('GITHUB_REPOSITORY')}/actions/runs/{os.getenv('WORKFLOW_ID')}",
               "reading_time": max(1, len(content.split()) // 200)
           }
-          
-          # إضافة المنشور الجديد في البداية
+
           posts.insert(0, new_post)
-          
-          # حفظ آخر 50 منشور فقط
           posts = posts[:50]
-          
-          # التأكد من وجود مجلد docs
           os.makedirs('docs', exist_ok=True)
-          
-          # حفظ الملف
           with open(posts_file, 'w', encoding='utf-8') as f:
               json.dump(posts, f, ensure_ascii=False, indent=2)
-          
-          print(f"✅ Saved {len(posts)} posts to {posts_file}")
-          print(f"Latest post title: {title}")
-          print(f"Content length: {len(content)} characters")
+
+          print(f"✅ Saved. Type detected: {new_post['type']}")
           PYEOF
         env:
           WORKFLOW_ID: ${{ steps.run-agent.outputs.workflow_id }}
@@ -185,7 +140,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add docs/posts.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "📝 Update posts with real content" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "📝 Auto-classified post" && git push)
         continue-on-error: true
 
       - name: Upload database as artifact
