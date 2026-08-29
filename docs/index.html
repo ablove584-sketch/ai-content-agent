@@ -190,7 +190,7 @@ footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}
 var allPosts=[],currentFilter='all',currentSearch='',shown=0,currentPostId=null,BATCH=5;
 var TYPE_LABELS={random:'عشوائي',book_summary:'ملخص كتاب',article:'مقال',story:'قصة',facts:'حقائق',tips:'نصائح',news:'خبر تقني',philosophy:'فلسفة',history:'تاريخ',science:'علوم',psychology:'علم نفس'};
 var TYPE_ICONS={random:'🎲',book_summary:'📚',article:'📝',story:'📖',facts:'💡',tips:'🎯',news:'📰',philosophy:'🤔',history:'🏛️',science:'🔬',psychology:'🧠'};
-var TYPE_IMAGES={random:'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=70&auto=format',book_summary:'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&q=70&auto=format',article:'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&q=70&auto=format',story:'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&q=70&auto=format',facts:'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&q=70&auto=format',tips:'https://images.unsplash.com/photo-1512314889357-e157c22f938d?w=600&q=70&auto=format',news:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=70&auto=format',philosophy:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=70&auto=format',history:'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=600&q=70&auto=format',science:'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&q=70&auto=format',psychology:'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=70&auto=format'};
+var TYPE_IMAGES={random:'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=500&q=60&auto=format',book_summary:'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&q=60&auto=format',article:'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=500&q=60&auto=format',story:'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500&q=60&auto=format',facts:'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&q=60&auto=format',tips:'https://images.unsplash.com/photo-1512314889357-e157c22f938d?w=500&q=60&auto=format',news:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500&q=60&auto=format',philosophy:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=60&auto=format',history:'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=500&q=60&auto=format',science:'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500&q=60&auto=format',psychology:'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=500&q=60&auto=format'};
 
 // SVG Icons
 var HEART_O='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
@@ -328,7 +328,7 @@ var _m=makeCard;
 makeCard=function(p){var d=_m(p);
 if(isNew(p)){var h=d.querySelector('.i-name');if(h){var s=document.createElement('span');s.className='new-badge';s.textContent='جديد';h.appendChild(s);}}
 var t=d.querySelector('.i-time');if(t)t.innerHTML+=' • 👁️ '+fmtNum(getViews(p.id));
-var im=d.querySelector('.i-img img');if(im)im.onerror=function(){im.src='https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&q=70&auto=format';im.onerror=null;};
+var im=d.querySelector('.i-img img');if(im)im.onerror=function(){im.src='https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=500&q=60&auto=format';im.onerror=null;};
 return d;};
 var _o=openPost;
 openPost=function(id){_o(id);addExtras(id);};
@@ -382,7 +382,7 @@ return d;};
 <script>
 // ========== SMART IMAGES ==========
 var U='https://images.unsplash.com/';
-var Q='?w=600&q=70&auto=format';
+var Q='?w=500&q=60&auto=format';
 var IMG_POOLS={
 ship:[U+'photo-1493962853295-0fd70327578a'+Q,U+'photo-1505142468610-359e7d316be0'+Q,U+'photo-1500375592092-40eb2168fd21'+Q],
 brain:[U+'photo-1559757148-5c350d0d3c56'+Q,U+'photo-1499209974431-9dddcece7f88'+Q,U+'photo-1507003211169-0a1dd7228f2d'+Q],
@@ -570,5 +570,31 @@ c.innerHTML='<div class="empty">⚠️ تعذر تحميل المنشورات<br
 .featured-row .side .widget{flex:0 1 auto}
 </style>
 <!-- ====== feat-fix2 ====== -->
+
+<style>
+/* ====== speed-fix: خلفية أنيقة أثناء تحميل الصور ====== */
+.i-img{background:linear-gradient(135deg,#2a2a45,#151528)}
+.i-img img{opacity:0;transition:opacity .5s}
+.i-img img.loaded{opacity:1}
+</style>
+<script>
+// ظهور تدريجي للصور عند اكتمال التحميل
+document.addEventListener('load',function(e){var t=e.target;if(t&&t.tagName==='IMG')t.classList.add('loaded');},true);
+document.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='IMG')t.classList.add('loaded');},true);
+// ضمان وجود المنشور المميز دائماً + أولوية تحميل لصورته
+var _pf=placeFeatured;
+placeFeatured=function(){
+var cont=document.getElementById('postsContainer');
+if(cont&&!cont.querySelector('.insta-card.featured')){
+var first=cont.querySelector('.insta-card');
+if(first){first.classList.add('featured');first.classList.remove('grid-card');}
+}
+_pf();
+var row=document.getElementById('featuredRow');
+if(row){var f=row.querySelector('.insta-card.featured');
+if(f){var im=f.querySelector('img');if(im){im.loading='eager';try{im.fetchPriority='high';}catch(e){}}}}
+};
+</script>
+<!-- ====== speed-fix ====== -->
 </body>
 </html>
