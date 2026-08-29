@@ -416,5 +416,19 @@ makeCard=function(p){var d=_mi(p);var im=d.querySelector('.i-img img');if(im){im
 var _oi=openPost;
 openPost=function(id){_oi(id);var p=null;for(var i=0;i<allPosts.length;i++)if(allPosts[i].id===id){p=allPosts[i];break;}if(p)$('mImg').src=postImage(p);};
 </script>
+
+<style>
+/* ===== layout-v2 ===== */
+.layout{display:flex;flex-direction:column}
+.side{order:-1;display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:0 0 15px}
+@media(max-width:1100px){.side{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.side{grid-template-columns:1fr}}
+#postsContainer{align-items:stretch}
+.insta-card{display:flex;flex-direction:column}
+.insta-card.grid-card .i-img{aspect-ratio:1/1;flex-shrink:0}
+.insta-card.grid-card .i-title{height:42px;overflow:hidden}
+.insta-card.grid-card .i-cap{height:78px;overflow:hidden}
+.insta-card.grid-card .i-time{margin-top:auto}
+</style>
 </body>
 </html>
