@@ -1086,5 +1086,22 @@ if(i&&document.activeElement===i){e.preventDefault();closeBottom();}
 });
 </script>
 <!-- ====== search-enter ====== -->
+
+<script>
+// ====== mobile-feat-text: المميز نص قصير بالجوال ======
+var _mk6=makeCard;
+makeCard=function(p){var d=_mk6(p);
+if(window.matchMedia('(max-width:768px)').matches&&d.classList.contains('featured')){
+var content=p.content||'';
+var prev=content.length>90?content.substring(0,90)+'... ':content;
+var cap=d.querySelector('.i-cap');
+if(cap){
+var tags=(p.hashtags||[]).slice(0,4);
+cap.innerHTML='<span class="i-name">alkinani</span> ✨ <strong style="color:var(--text)">'+(p.title||'')+'</strong> '+prev+(content.length>90?'<button class="i-more" onclick="openPost('+p.id+')">... المزيد</button>':'')+(tags.length?'<div class="i-tags">'+tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>':'');
+}
+}
+return d;};
+</script>
+<!-- ====== mobile-feat-text ====== -->
 </body>
 </html>
