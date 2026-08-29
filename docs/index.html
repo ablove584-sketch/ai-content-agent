@@ -719,5 +719,14 @@ openBottom();
 function saveProfile(){lsSet('userName',document.getElementById('pfName').value.trim()||'زائر');toast('✅ تم الحفظ');closeBottom();}
 </script>
 <!-- ====== mobile-nav ====== -->
+
+<style>
+/* ====== mobile-clean: إخفاء من الجوال فقط ====== */
+@media(max-width:768px){
+.back-top{display:none!important}
+footer{display:none!important}
+}
+</style>
+<!-- ====== mobile-clean ====== -->
 </body>
 </html>
