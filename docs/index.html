@@ -493,5 +493,19 @@ if(feat)row.insertBefore(feat,row.firstChild);
 .insta-card.grid-card .i-title{font-size:var(--card-title-size)}
 .insta-card.grid-card .i-cap{font-size:var(--card-text-size)}
 </style>
+
+<style>
+/* ====== size-fix: توحيد المقاسات نهائياً ====== */
+.insta-card .i-img{aspect-ratio:var(--card-img-ratio,4/5)!important;max-height:none!important;height:auto!important;overflow:hidden;flex-shrink:0}
+.insta-card.featured .i-img{aspect-ratio:var(--feat-img-ratio,4/5)!important}
+.insta-card{display:flex;flex-direction:column;height:auto}
+.insta-card.grid-card .i-title{height:42px;overflow:hidden}
+.insta-card.grid-card .i-cap{height:78px;overflow:hidden}
+.insta-card.grid-card .i-time{margin-top:auto}
+@media(min-width:1101px){#postsContainer{grid-template-columns:repeat(var(--grid-cols,3),1fr)!important}}
+@media(max-width:1100px){#postsContainer{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:640px){#postsContainer{grid-template-columns:1fr!important}}
+</style>
+<!-- ====== size-fix ====== -->
 </body>
 </html>
