@@ -561,5 +561,14 @@ c.innerHTML='<div class="empty">⚠️ تعذر تحميل المنشورات<br
 },8000);
 </script>
 <!-- ====== display-fix ====== -->
+
+<style>
+/* ====== feat-fix2: ضبط ارتفاع المميز والودجات ====== */
+.featured-row{align-items:stretch}
+.featured-row .insta-card.featured .i-img{flex:none!important;aspect-ratio:4/5!important;max-height:600px!important;min-height:280px}
+.featured-row .side{display:flex!important;flex-direction:column;gap:15px;justify-content:space-between;max-height:none!important;overflow:visible!important}
+.featured-row .side .widget{flex:0 1 auto}
+</style>
+<!-- ====== feat-fix2 ====== -->
 </body>
 </html>
