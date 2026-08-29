@@ -2,6 +2,13 @@
 <html dir="rtl" lang="ar">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="alkinani">
+
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -1221,5 +1228,32 @@ closeBottom();closeProfile();openProfile();toast('✅ تم حفظ الملف');
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeProfile();});
 </script>
 <!-- ====== profile-view ====== -->
+
+<style>
+/* ====== app-feel: إحساس تطبيق أصلي ====== */
+*{-webkit-tap-highlight-color:transparent}
+html,body{overscroll-behavior:none}
+body{touch-action:manipulation}
+button,.chip,.tab-btn,.bn-btn{-webkit-user-select:none;user-select:none}
+</style>
+<script>
+// الملف الشخصي: بطاقات كاملة مثل الرئيسية
+function pfTab(t){
+var tabs=document.querySelectorAll('.pf-tab');
+for(var i=0;i<tabs.length;i++)tabs[i].classList.toggle('active',tabs[i].getAttribute('data-tab')===t);
+var wrap=document.getElementById('pfGridWrap');
+var list=[];
+if(t==='posts')list=allPosts;
+else if(t==='saved'){var f=[];try{f=JSON.parse(lsGet('favs','[]'));}catch(e){}list=allPosts.filter(function(p){return f.indexOf(p.id)>-1;});}
+else list=allPosts.filter(function(p){return isLiked(p.id);});
+if(!list.length){wrap.innerHTML='<div style="text-align:center;color:var(--muted);padding:60px 20px">لا يوجد محتوى هنا بعد</div>';return;}
+wrap.innerHTML='<div class="saved-feed"></div>';
+var feed=wrap.firstChild;
+var old=window._featDone;window._featDone=true;
+for(var i=0;i<list.length;i++)feed.appendChild(makeCard(list[i]));
+window._featDone=old;
+}
+</script>
+<!-- ====== app-feel ====== -->
 </body>
 </html>

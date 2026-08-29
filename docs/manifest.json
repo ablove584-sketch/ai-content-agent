@@ -1,0 +1,13 @@
+{
+  "name": "alkinani - مركز المحتوى الذكي",
+  "short_name": "alkinani",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f0f1e",
+  "theme_color": "#667eea",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+  ]
+}
