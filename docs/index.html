@@ -874,5 +874,17 @@ b.appendChild(d);
 };
 </script>
 <!-- ====== mobile-min ====== -->
+
+<style>
+/* ====== mobile-fix2: الشريط يرجع + المنشورات أولاً ====== */
+@media(max-width:768px){
+.top-app-bar{display:flex!important}
+.container>header{display:none!important}
+.layout{display:flex;flex-direction:column}
+#postsContainer{order:1}
+.featured-row{order:2}
+}
+</style>
+<!-- ====== mobile-fix2 ====== -->
 </body>
 </html>
