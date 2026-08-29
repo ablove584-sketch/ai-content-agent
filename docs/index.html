@@ -10,6 +10,26 @@
 <link rel="preconnect" href="https://images.unsplash.com">
 <title>alkinani | مركز المحتوى الذكي</title>
 <style>
+<style>
+/* ============================================ */
+/* ====== ⚙️ إعدادات المقاسات - عدّل من هنا ====== */
+/* ============================================ */
+:root{
+--grid-cols:3;             /* عدد أعمدة الشبكة (2 أو 3 أو 4) */
+--card-img-ratio:4/5;      /* صورة البطاقة: 1/1 مربع | 4/5 عمودي | 16/9 عريض */
+--feat-img-ratio:4/5;      /* صورة المنشور الكبير */
+--card-title-size:14px;    /* حجم عنوان البطاقة */
+--card-text-size:12px;     /* حجم نص البطاقة */
+}
+/* ============================================ */
+#postsContainer{grid-template-columns:repeat(var(--grid-cols),1fr)}
+.insta-card.grid-card .i-img{aspect-ratio:var(--card-img-ratio)}
+.insta-card.featured .i-img{aspect-ratio:var(--feat-img-ratio)}
+.insta-card.grid-card .i-title{font-size:var(--card-title-size)}
+.insta-card.grid-card .i-cap{font-size:var(--card-text-size)}
+</style>
+<!-- ====== size-settings ====== -->
+
 :root{--primary:#667eea;--secondary:#764ba2;--grad:linear-gradient(135deg,#667eea,#764ba2);--bg:#f0f2f8;--card:#fff;--text:#1a202c;--muted:#718096;--border:#e2e8f0;--shadow:0 3px 15px rgba(0,0,0,.08)}
 [data-theme=dark]{--bg:#0f0f1e;--card:#1a1a2e;--text:#e2e8f0;--muted:#a0aec0;--border:#2d3748;--shadow:0 3px 15px rgba(0,0,0,.4)}
 *{margin:0;padding:0;box-sizing:border-box}
