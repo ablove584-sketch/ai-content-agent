@@ -142,6 +142,10 @@ jobs:
                       except: hashtags = []
               conn.close()
 
+          # تثبيت #alkinani كأول هاشتاج (5 كحد أقصى)
+          hashtags = [t for t in hashtags if t != '#alkinani'][:4]
+          hashtags.append('#alkinani')  # brand-tag-wf
+
           new_post = {
               "id": len(posts) + 1,
               "title": title,

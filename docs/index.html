@@ -1558,5 +1558,19 @@ return t;
 };
 </script>
 <!-- ====== content-v2 ====== -->
+
+<script>
+// ====== brand-tag: #alkinani ثابت في كل منشور ======
+var _ra3=renderAll;
+renderAll=function(){
+allPosts.forEach(function(p){
+var h=(p.hashtags||[]).filter(function(t){return t!=='#alkinani';});
+h.unshift('#alkinani');
+p.hashtags=h.slice(0,5);
+});
+_ra3();
+};
+</script>
+<!-- ====== brand-tag ====== -->
 </body>
 </html>
