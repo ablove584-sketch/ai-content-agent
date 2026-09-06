@@ -1504,5 +1504,32 @@ if(nb)bindNavFinal();
 },3000);
 </script>
 <!-- ====== tabs-final ====== -->
+
+<script>
+// ====== emotional-topics: 10 أنواع جديدة ======
+Object.assign(TYPE_LABELS,{hope:'الأمل',life:'الحياة',friendship:'الصداقة',mother:'الأم',homeland:'الوطن',exile:'الغربة',success:'النجاح',failure:'الفشل',love:'الحب',change:'التغيير'});
+Object.assign(TYPE_ICONS,{hope:'🌅',life:'🌱',friendship:'🤝',mother:'🌹',homeland:'🏡',exile:'✈️',success:'🏆',failure:'💪',love:'💞',change:'🦋'});
+var U2='https://images.unsplash.com/';var Q2='?w=500&q=60&auto=format';
+Object.assign(TYPE_IMAGES,{hope:U2+'photo-1470252649378-9c29740c9fa8'+Q2,life:U2+'photo-1441974231531-c6227db76b6e'+Q2,friendship:U2+'photo-1529156069898-49953e39b3ac'+Q2,mother:U2+'photo-1490750967868-88aa4486c946'+Q2,homeland:U2+'photo-1469474968028-56623f02e42e'+Q2,exile:U2+'photo-1436491865332-7a61a109cc05'+Q2,success:U2+'photo-1519681393784-d120267933ba'+Q2,failure:U2+'photo-1506744038136-46273834b3fb'+Q2,love:U2+'photo-1518199266791-5375a83190b7'+Q2,change:U2+'photo-1452570053594-1b985d6ea890'+Q2});
+var _dt2=detectType;
+detectType=function(p){
+var t=_dt2(p);
+if(t==='article'||t==='random'){
+var s=((p.title||'')+' '+(p.content||'')+' '+(p.hashtags||[]).join(' '));
+if(/صداقة|صديق|أصدقاء/.test(s))return 'friendship';
+if(/أمي|حنان|الأم/.test(s))return 'mother';
+if(/وطن|بلاد|موطن|انتماء/.test(s))return 'homeland';
+if(/غربة|اغتراب|مهجر|حنين/.test(s))return 'exile';
+if(/نجاح|إنجاز|طموح/.test(s))return 'success';
+if(/فشل|إخفاق|تعثر/.test(s))return 'failure';
+if(/حب|عشق|قلوب/.test(s))return 'love';
+if(/تغيير|تحوّل|بداية جديدة/.test(s))return 'change';
+if(/أمل|تفاؤل|إشراق/.test(s))return 'hope';
+if(/حياة|معيشة|يومية/.test(s))return 'life';
+}
+return t;
+};
+</script>
+<!-- ====== emotional-topics ====== -->
 </body>
 </html>
