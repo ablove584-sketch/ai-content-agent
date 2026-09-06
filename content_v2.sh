@@ -1,3 +1,46 @@
+#!/bin/bash
+
+# ========== 1) الموقع ==========
+python3 << 'PYEOF'
+with open('docs/index.html','r',encoding='utf-8') as f: c=f.read()
+if 'content-v2' not in c:
+    extra = r'''
+<script>
+// ====== content-v2: حذف العاطفية + إضافة 9 تصنيفات ======
+['hope','life','friendship','mother','homeland','exile','success','failure','love','change'].forEach(function(k){delete TYPE_LABELS[k];delete TYPE_ICONS[k];delete TYPE_IMAGES[k];});
+Object.assign(TYPE_LABELS,{amazing_facts:'معلومات وحقائق مذهلة',ai_tech:'الذكاء الاصطناعي والتقنية',self_dev:'تطوير الذات والمهارات',money:'المال والأعمال',true_stories:'قصص حقيقية قصيرة',world:'حول العالم',simple_science:'العلوم المبسطة',civilizations:'التاريخ والحضارات',daily:'محتوى يومي سريع'});
+Object.assign(TYPE_ICONS,{amazing_facts:'🌍',ai_tech:'🤖',self_dev:'🧠',money:'💰',true_stories:'📖',world:'✈️',simple_science:'🔬',civilizations:'🏛️',daily:'⚡'});
+var U3='https://images.unsplash.com/';var Q3='?w=500&q=60&auto=format';
+Object.assign(TYPE_IMAGES,{amazing_facts:U3+'photo-1446776811953-b23d57bd21aa'+Q3,ai_tech:U3+'photo-1485827404703-89b55fcc595e'+Q3,self_dev:U3+'photo-1499750310107-5fef28a66643'+Q3,money:U3+'photo-1554224155-6726b3ff858f'+Q3,true_stories:U3+'photo-1455390582262-044cdead277a'+Q3,world:U3+'photo-1488646953014-85cb44e25828'+Q3,simple_science:U3+'photo-1532094349884-543bc11b234d'+Q3,civilizations:U3+'photo-1461360370896-922624d12aa1'+Q3,daily:U3+'photo-1451187580459-43490279c0fa'+Q3});
+var EMOT=['hope','life','friendship','mother','homeland','exile','success','failure','love','change'];
+var _dt3=detectType;
+detectType=function(p){
+var s=((p.title||'')+' '+(p.content||'')+' '+(p.hashtags||[]).join(' '));
+if(/معلومة اليوم|رقم اليوم|حدث في مثل هذا اليوم|هل تعلم/.test(s))return 'daily';
+if(/حضارة|حضارات|فرعون|معركة|اكتشافات/.test(s))return 'civilizations';
+if(/جسم الإنسان|الحيوانات|لماذا يحدث|فيزياء|كيمياء|فضاء/.test(s))return 'simple_science';
+if(/ذكاء اصطناعي|أدوات|AI|تقنية|مواقع مفيدة|تطبيق|برمج/.test(s))return 'ai_tech';
+if(/إدارة الوقت|تركيز|تعلم|عادات|تواصل|تطوير الذات|مهارات/.test(s))return 'self_dev';
+if(/مشروع|تجارة|ادخار|استثمار|عمل حر|مال|أعمال|شركة/.test(s))return 'money';
+if(/حول العالم|دول|مدن|شعوب|سياحة|قوانين/.test(s))return 'world';
+if(/قصة حقيقية|حدثت|اختراع|غريبة|شخص/.test(s))return 'true_stories';
+if(/حقائق|مذهلة|أرقام|معلومة|غريبة/.test(s))return 'amazing_facts';
+var t=_dt3(p);
+if(EMOT.indexOf(t)>-1)return 'amazing_facts';
+return t;
+};
+</script>
+<!-- ====== content-v2 ====== -->
+'''
+    c = c.replace('</body>', extra + '</body>', 1)
+    with open('docs/index.html','w',encoding='utf-8') as f: f.write(c)
+    print('✅ website updated')
+else:
+    print('⚠️ website already done')
+PYEOF
+
+# ========== 2) الـ workflow ==========
+cat > .github/workflows/content-agent.yml << 'EOF'
 name: AI Content Agent
 
 on:
@@ -184,3 +227,6 @@ jobs:
           path: data/content.db
           retention-days: 7
           overwrite: true
+EOF
+
+git add -A && git commit -m "Replace emotional types with 9 new content categories" && git push
