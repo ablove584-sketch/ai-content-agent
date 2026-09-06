@@ -54,7 +54,7 @@ jobs:
             life) CTOPIC="الحياة"; CT="article";;
             friendship) CTOPIC="الصداقة"; CT="article";;
             mother) CTOPIC="الأم"; CT="article";;
-            homeland) CTOPIC="الوطن"; CT="article";;;
+            homeland) CTOPIC="الوطن"; CT="article";;
             exile) CTOPIC="الغربة"; CT="article";;
             success) CTOPIC="النجاح"; CT="article";;
             failure) CTOPIC="الفشل"; CT="article";;
